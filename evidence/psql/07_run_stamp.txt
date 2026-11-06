@@ -1,0 +1,10 @@
+finished_at=2026-11-06T14:47:58+00:00
+database=edutrack
+postgres=16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)
+edutrack_sha256=faebf83f72bbf95d7ef55aad78f36fc9168891c36e8994eeb4a65629086e3387
+queries_sha256=3af333ff5e4bef38e30389c17e2feb1e8a03308b3cccb10d9a699c7d6ccbe6e0
+students_before=10
+courses_before=7
+students_hash=9040195f9dbefe6f0bc3b431f4f81cbd
+courses_hash=13ff18accb70e8ce0394e19750c4865e
+assert=pass

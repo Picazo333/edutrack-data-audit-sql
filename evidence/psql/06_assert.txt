@@ -1,0 +1,4 @@
+# aserciones
+CREATE TABLE
+INSERT 0 1
+DO
