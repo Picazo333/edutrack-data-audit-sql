@@ -36,3 +36,19 @@ El borrado en cascada se menciona en el enunciado como teoría del día y queda 
 | R28 | sí | No usar herramientas de IA para generar las consultas SQL. |
 | R29 | sí | `queries.sql`, `analysis_report.md` y `diagram.png` están en la raíz de un repositorio público. |
 | R30 | sí | Compartir el repositorio con el instructor, siguiendo sus instrucciones de entrega. |
+
+## Recuento
+
+Obligatorios: 30 (R01–R30).
+
+| Estado | N | IDs |
+| --- | --- | --- |
+| PASS | 26 | R01, R02, R03, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R26, R27, R29 |
+| FAIL | 0 | — |
+| BLOCKED_HITL | 2 | R04, R25 |
+| HITL_MIGUEL | 1 | R28 |
+| HITL_ENVIO_MIGUEL | 1 | R30 |
+
+26 + 0 + 2 + 1 + 1 = 30.
+
+R04 y R25 piden Supabase. Quedan BLOCKED_HITL. R30 es el envío y queda HITL_ENVIO_MIGUEL. R28 queda HITL_MIGUEL. Nota: declaración de autoría/uso de herramientas al entregar: decisión de Miguel.

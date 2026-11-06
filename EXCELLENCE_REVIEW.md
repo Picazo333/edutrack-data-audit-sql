@@ -1,6 +1,10 @@
 # Revisión de excelencia
 
-Los extras no cambian el enunciado. Los dos pedidos en el lanzamiento están hechos. Un tercero, el workflow, también.
+Los extras no cambian el enunciado ni el recuento de obligatorios.
+
+Ese recuento, el mismo en `RUBRIC.md`, `RUBRIC_JUSTIFICATION.md`, `EVAL.md`, `EVIDENCE_MANIFEST.yaml` y `FINAL_AUDIT.md`: 30 obligatorios, 26 PASS, 0 FAIL, 2 BLOCKED_HITL (R04, R25), 1 HITL_MIGUEL (R28), 1 HITL_ENVIO_MIGUEL (R30). 26 + 0 + 2 + 1 + 1 = 30.
+
+Los dos pedidos en el lanzamiento están hechos. Un tercero, el workflow, también.
 
 ## Visible — IMPLEMENT
 

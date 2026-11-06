@@ -2,7 +2,7 @@
 
 Revisión de `students`, `courses` y `enrollments` después de la migración. Ninguna de las preguntas se responde con una sola tabla: cada consulta une al menos dos.
 
-Corrida de referencia: PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1), 2026-11-06T09:32:23+00:00. El sello está en `evidence/psql-v2/06_run_stamp.txt`. Las tablas de Q1 a Q10 salen de `evidence/psql-v2/03_queries.txt`. La carga y las tres comprobaciones `LIMIT 5` salen de `evidence/psql-v2/02_import_check.txt`.
+Corrida de referencia: PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1), 2026-11-06T14:52:20+00:00. El sello está en `evidence/psql-v2/06_run_stamp.txt`. Las tablas de Q1 a Q10 salen de `evidence/psql-v2/03_queries.txt`. La carga y las tres comprobaciones `LIMIT 5` salen de `evidence/psql-v2/02_import_check.txt`.
 
 En la salida cruda de `psql`, un resultado vacío se imprime como `(0 rows)`. En este informe eso se escribe **0 filas**.
 

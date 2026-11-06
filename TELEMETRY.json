@@ -1,33 +1,53 @@
 {
   "started_at": "2026-11-06T09:17:00+00:00",
-  "ended_at": "2026-11-06T09:35:55+00:00",
-  "started_at_source": "Marca de tiempo del encargo, 9:17 UTC.",
-  "ended_at_source": "date -Iseconds al cerrar los documentos de auditoría, antes de este archivo y del commit.",
+  "ended_at": "2026-11-06T14:53:45+00:00",
+  "revision_started_at": "2026-11-06T14:49:00+00:00",
+  "revision_started_at_source": "Marca de tiempo del encargo de Miguel, 14:49 UTC.",
+  "ended_at_source": "date -Iseconds al cerrar el recuento, antes de reescribir este archivo.",
+  "merge": {
+    "from": "cursor/edutrack-data-audit-f76c",
+    "their_head": "fcb2dd3456f69cb498c6922ce0af590c1730c2af",
+    "method": "git merge",
+    "rebase": false,
+    "force_push": false
+  },
   "eval_repair_iterations": 0,
-  "eval_cycles": 1,
+  "eval_cycles": 2,
   "failures_found": [],
   "repair_notes": [
-    "La primera ejecución de scripts/recreate_and_run_v2.sh terminó en 0. No hubo un ciclo de reparación del SQL.",
-    "scripts/recreate_and_run.sh también terminó en 0 tras mover las rutas a 019/. La evidencia plana solo difería en la hora del sello; se restauró evidence/psql/ para no reescribir la corrida ya guardada del 019."
+    "La pasada 2026-11-06T14:52:20+00:00 de scripts/recreate_and_run_v2.sh terminó en 0. Q1–Q10 y las aserciones cerraron sin reparación."
   ],
   "verification_commands": [
-    "./scripts/recreate_and_run_v2.sh",
-    "./scripts/recreate_and_run.sh",
-    "NODE_PATH=/tmp/node_modules node scripts/export_diagram.cjs",
-    "sha256sum -c 019/SHA256SUMS",
-    "sha256sum edutrack_v2.sql"
+    "git merge origin/cursor/edutrack-data-audit-f76c",
+    "./scripts/recreate_and_run_v2.sh"
   ],
+  "counts": {
+    "required": 30,
+    "pass": 26,
+    "fail": 0,
+    "blocked_hitl": 2,
+    "hitl_miguel": 1,
+    "hitl_envio_miguel": 1,
+    "sum": 30,
+    "check": "26 + 0 + 2 + 1 + 1 = 30",
+    "labels": ["PASS", "FAIL", "BLOCKED_HITL", "HITL_MIGUEL", "HITL_ENVIO_MIGUEL"],
+    "pass_ids": ["R01", "R02", "R03", "R05", "R06", "R07", "R08", "R09", "R10", "R11", "R12", "R13", "R14", "R15", "R16", "R17", "R18", "R19", "R20", "R21", "R22", "R23", "R24", "R26", "R27", "R29"],
+    "blocked_hitl_ids": ["R04", "R25"],
+    "hitl_miguel_ids": ["R28"],
+    "hitl_envio_miguel_ids": ["R30"]
+  },
   "tokens_used": null,
   "tokens_unmeasurable_reason": "Esta sesión no expone un contador de tokens. No hay una cifra real que copiar y no se inventa una.",
   "tokens_proxy": {
-    "method": "Bytes del workspace sin .git, y diff contra HEAD con git add -N, medidos antes de escribir TELEMETRY.json.",
-    "workspace_files": 45,
-    "workspace_bytes": 256120,
-    "diff_files": 31,
-    "diff_insertions": 2447,
-    "diff_deletions": 399,
-    "duration_seconds": 1135,
-    "duration_from": "2026-11-06T09:17:00+00:00",
-    "duration_to": "2026-11-06T09:35:55+00:00"
+    "method": "Bytes del workspace sin .git, medidos antes de reescribir TELEMETRY.json. El diff es git diff --shortstat HEAD en ese momento y no incluye EVAL.md, que aún no estaba en el índice.",
+    "measured_at": "2026-11-06T14:53:45+00:00",
+    "workspace_files": 53,
+    "workspace_bytes": 294269,
+    "diff_files_tracked": 7,
+    "diff_insertions_tracked": 88,
+    "diff_deletions_tracked": 35,
+    "revision_duration_seconds": 285,
+    "revision_from": "2026-11-06T14:49:00+00:00",
+    "revision_to": "2026-11-06T14:53:45+00:00"
   }
 }

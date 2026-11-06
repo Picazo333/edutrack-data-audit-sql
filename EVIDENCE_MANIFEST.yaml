@@ -5,7 +5,22 @@
 # el commit dejaría de ser el mismo.
 branch: feature/edutrack-data-audit-sql-related-tables
 base: cursor/edutrack-data-audit-f76c
-run_finished_at: "2026-11-06T09:32:23+00:00"
+run_finished_at: "2026-11-06T14:52:20+00:00"
+merged_019_head: fcb2dd3456f69cb498c6922ce0af590c1730c2af
+counts:
+  required: 30
+  pass: 26
+  fail: 0
+  blocked_hitl: 2
+  hitl_miguel: 1
+  hitl_envio_miguel: 1
+  sum: 30
+  check: "26 + 0 + 2 + 1 + 1 = 30"
+  pass_label: PASS
+  fail_label: FAIL
+  blocked_hitl_label: BLOCKED_HITL
+  hitl_miguel_label: HITL_MIGUEL
+  hitl_envio_miguel_label: HITL_ENVIO_MIGUEL
 postgres: "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
 
 files:
@@ -16,7 +31,7 @@ files:
     sha256: 797bde8f286efcfb27daafae9a6bc9a6d8ed6ab453aa962c66a9f609952b0108
     rubric: [R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R27]
   - path: analysis_report.md
-    sha256: aafc93ede6d6796c2b144b57a93f6a6ea3335f29788d3d52f0118cfc150c0ba9
+    sha256: 41be7c895355fc432e19aeced3e471e522563d51b18910d52a998dc5a39196c2
     rubric: [R07, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R26]
   - path: diagram.png
     sha256: d9714a066f3c8fedb202484dcaaf3c4e100da45d8213e1b36eab7dd71c7a1901
@@ -45,7 +60,7 @@ files:
     sha256: aa0db0b9b3488d8d4b6050a611399323f9ebd06867fc2ab7b44e592f03be3f74
     rubric: [R24]
   - path: evidence/psql-v2/06_run_stamp.txt
-    sha256: 2b4f67ce6817e52f2f626a152cf02eab2ae0174278e5e5f8ef1b6c0e6f40154e
+    sha256: 0b4ae0e4e744c73b8ad6d27472a7b8933f94dfd60d075e6c0e2de551beec695d
     rubric: [R01, R24, R26]
   - path: evidence/diagram/export_log.txt
     sha256: 6e851db68f4a9bd6b4c4f0eb38fa9b071d54fc6321605b69e8282191bc0c356e
@@ -60,14 +75,16 @@ files:
     sha256: e36f3f5f7d7bc58b3c2727b170729379fdc678c11445b7433a994fca52290027
     note: "Informe de la auditoría plana, sin cambios. Movido desde la raíz."
 
-blocked:
+blocked_hitl:
   - id: R04
-    reason: "Supabase exige sesión. No se creó cuenta ni se abrió un proyecto."
+    reason: "Supabase exige un proyecto y el SQL Editor. Esta corrida no los abrió."
   - id: R25
     reason: "Las 10 consultas no se ejecutaron en el SQL Editor de Supabase."
-  - id: R30
-    reason: "No se envía el repositorio al LMS."
 
-fail:
+hitl_miguel:
   - id: R28
-    reason: "Las consultas las generó el agente de esta sesión."
+    note: "declaración de autoría/uso de herramientas al entregar: decisión de Miguel"
+
+hitl_envio_miguel:
+  - id: R30
+    note: "El envío al instructor queda fuera de esta corrida."
