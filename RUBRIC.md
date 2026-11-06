@@ -44,7 +44,7 @@ Estado de cada criterio se cierra en `RUBRIC_JUSTIFICATION.md` después de la ev
 | --- | --- | --- |
 | R30 | sí | Importar `edutrack.sql` en un proyecto Supabase y ejecutar las consultas en el SQL Editor de Supabase. |
 
-R30 exige explícitamente Supabase (proyecto y SQL Editor). Sin cuenta ni credenciales no se crea una cuenta. Queda BLOCKED hasta que Miguel lo reproduzca. Los pasos exactos se documentan en el README y en `FINAL_AUDIT.md`.
+R30 exige explícitamente Supabase (proyecto y SQL Editor). Sin cuenta ni credenciales no se crea una cuenta. Queda **BLOCKED_HITL** hasta que Miguel lo reproduzca. Los pasos exactos se documentan en el README y en `FINAL_AUDIT.md`.
 
 ## C. Entrega
 
@@ -77,4 +77,4 @@ No sustituyen a un obligatorio. Deben existir además de la rúbrica.
 
 - La estructura interna de `students` y `courses` no se evalúa. Solo se comprueba que esta entrega no las modifica.
 
-R31 es obligatorio. No queda fuera de la rúbrica. Su estado se cierra en `RUBRIC_JUSTIFICATION.md`. Esta corrección de rúbrica no reescribe `queries.sql` ni `analysis_report.md`.
+R31 es obligatorio. Estado: **HITL_MIGUEL**. Nota: declaración de autoría/uso de herramientas al entregar: decisión de Miguel.

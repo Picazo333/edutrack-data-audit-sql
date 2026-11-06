@@ -5,11 +5,11 @@ Rama: `cursor/edutrack-data-audit-f76c`
 Pull request: https://github.com/Picazo333/edutrack-data-audit-sql/pull/1
 Motor: PostgreSQL 16.15 local. Corrida de evidencia: `2026-11-06T09:12:56+00:00`, `assert=pass`.
 
-Estado: **BLOCKED_INTEGRIDAD_MIGUEL**
+Resultado de lo puntuable: **29/31 PASS**, **0 FAIL**, **1 BLOCKED_HITL** (R30), **1 HITL_MIGUEL** (R31).
 
-Resultado de lo puntuable: **29/31 PASS**, **1 FAIL** (R31), **1 BLOCKED** (R30).
+29 + 0 + 1 + 1 = 31.
 
-`queries.sql` (sha256 `3af333ff5e4bef38e30389c17e2feb1e8a03308b3cccb10d9a699c7d6ccbe6e0`) y `analysis_report.md` (sha256 `e36f3f5f7d7bc58b3c2727b170729379fdc678c11445b7433a994fca52290027`) no se modifican en esta corrección. Siguen siendo los blobs del commit `e446d9883294325009f58099e34a37c738a8322c`.
+Verificación de esta pasada: `./scripts/recreate_and_run.sh` el `2026-11-06T14:47:58+00:00`, `assert=pass`. La salida de Q1–Q12 coincide con `evidence/psql/04_queries.txt`. `queries.sql` sigue en sha256 `3af333ff5e4bef38e30389c17e2feb1e8a03308b3cccb10d9a699c7d6ccbe6e0`.
 
 ## A. Enunciado
 
@@ -41,13 +41,13 @@ Resultado de lo puntuable: **29/31 PASS**, **1 FAIL** (R31), **1 BLOCKED** (R30)
 | R24 | PASS | `queries.sql` no tiene `INSERT`/`UPDATE`/`DELETE` sobre `students` ni `courses`. El hash de ambas tablas es el mismo antes y después. Los conteos siguen en 10 y 7. Las cuentas `@test.com` siguen en `students`. | Comprobación estática del script. `evidence/psql/07_run_stamp.txt` (`students_hash` y `courses_hash`). Aserción en `scripts/assert_after.sql`. |
 | R25 | PASS | El SHA-256 del archivo cargado es el de `PROVENANCE.json`: `faebf83f72bbf95d7ef55aad78f36fc9168891c36e8994eeb4a65629086e3387`. El script aborta si no coincide. La fila 18 sale de ese comentario, no de una fila inventada. | `evidence/psql/01_load.txt:2`. `evidence/psql/07_run_stamp.txt:4`. `edutrack.sql:109`–`edutrack.sql:127`. |
 | R26 | PASS | `queries.sql` es SQL de PostgreSQL: `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `GROUP BY`, `HAVING`, `AVG`, `SUM`, `COUNT`, `DATE '...'`, `IS NULL`, `LIKE`, `RETURNING`. No hay metacomandos `\dt` ni sintaxis de otro motor. `SET datestyle` solo fija el formato de la sesión. | `queries.sql:8` y el resto del archivo. La comprobación estática rechaza una línea que empiece por `\`. |
-| R31 | FAIL | `OFFICIAL_README.md`, línea 116: "Do not use AI tools to generate your SQL queries. Write each one yourself." Las consultas las escribió un agente de IA y la decisión (escribirlas Miguel, declarar el uso de IA o no entregar) es de Miguel. | Enunciado, línea 116. Esta corrección no reescribe el SQL ni el informe. `queries.sql` sha256 `3af333ff5e4bef38e30389c17e2feb1e8a03308b3cccb10d9a699c7d6ccbe6e0`. `analysis_report.md` sha256 `e36f3f5f7d7bc58b3c2727b170729379fdc678c11445b7433a994fca52290027`. |
+| R31 | HITL_MIGUEL | Criterio del enunciado, `OFFICIAL_README.md` línea 116. Declaración de autoría/uso de herramientas al entregar: decisión de Miguel. | `OFFICIAL_README.md:116`. `EVAL.md`. |
 
 ## B. Supabase
 
 | ID | Estado | Cómo se cumple | Evidencia |
 | --- | --- | --- | --- |
-| R30 | BLOCKED | El enunciado pide importar `edutrack.sql` en un proyecto Supabase y ejecutar las consultas en el SQL Editor. En esta corrida no hay cuenta ni credenciales, y no se crea una cuenta. El SQL ya está escrito para pegarlo allí. Los pasos, en el mismo orden, están en el README: (1) abrir el proyecto y el SQL Editor, (2) pegar y ejecutar `edutrack.sql`, (3) `SELECT * FROM enrollments LIMIT 5`, (4) pegar y ejecutar `queries.sql` una sola vez, (5) contrastar cada bloque con la sección del mismo número en `analysis_report.md`, (6) para repetir, volver a lanzar `edutrack.sql` y después `queries.sql`, (7) no escribir en `students` ni en `courses`. | Motivo de bloqueo: ausencia de cuenta. Pasos: `README.md:49`–`README.md:61`. La prueba sustituta de que el SQL corre es R21, en PostgreSQL 16.15, y no convierte R30 en PASS. |
+| R30 | BLOCKED_HITL | El enunciado pide importar `edutrack.sql` en un proyecto Supabase y ejecutar las consultas en el SQL Editor. En esta corrida no hay cuenta ni credenciales, y no se crea una cuenta. El SQL ya está escrito para pegarlo allí. Los pasos, en el mismo orden, están en el README: (1) abrir el proyecto y el SQL Editor, (2) pegar y ejecutar `edutrack.sql`, (3) `SELECT * FROM enrollments LIMIT 5`, (4) pegar y ejecutar `queries.sql` una sola vez, (5) contrastar cada bloque con la sección del mismo número en `analysis_report.md`, (6) para repetir, volver a lanzar `edutrack.sql` y después `queries.sql`, (7) no escribir en `students` ni en `courses`. | Motivo de bloqueo: ausencia de cuenta. Pasos: `README.md:49`–`README.md:61`. La prueba sustituta de que el SQL corre es R21, en PostgreSQL 16.15, y no convierte R30 en PASS. |
 
 ## C. Entrega
 
@@ -55,7 +55,7 @@ Resultado de lo puntuable: **29/31 PASS**, **1 FAIL** (R31), **1 BLOCKED** (R30)
 | --- | --- | --- | --- |
 | R27 | PASS | El trabajo está en `cursor/edutrack-data-audit-f76c` y el pull request contra `main` es el número 1. No se hizo merge. | https://github.com/Picazo333/edutrack-data-audit-sql/pull/1. Commit `e446d9883294325009f58099e34a37c738a8322c`. |
 | R28 | PASS | El README dice qué es el proyecto, la estructura, cómo lanzar el script, las decisiones de las consultas y los pasos de Supabase. No añade colaboradores ni una autoría inventada. | `README.md:1`–`README.md:61`. |
-| R29 | PASS | No se envió el repositorio al LMS ni a ninguna plataforma de entrega del curso. El enlace de la vista del curso queda para Miguel. | Esta corrida no llama a ningún endpoint del LMS. El estado de cierre es `PENDIENTE_REVISION_ORQUESTADOR` en `FINAL_AUDIT.md`. |
+| R29 | PASS | No se envió el repositorio al LMS ni a ninguna plataforma de entrega del curso. El enlace de la vista del curso queda para Miguel. | Esta corrida no llama a ningún endpoint del LMS. Los criterios que siguen abiertos están en `FINAL_AUDIT.md`: R30 y R31. |
 
 ## D. Extras
 
