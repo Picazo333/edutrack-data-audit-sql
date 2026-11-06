@@ -1,0 +1,32 @@
+# verificación de la importación
+            List of relations
+ Schema |    Name     | Type  |  Owner   
+--------+-------------+-------+----------
+ public | courses     | table | postgres
+ public | enrollments | table | postgres
+ public | students    | table | postgres
+(3 rows)
+
+ table_name  
+-------------
+ courses
+ enrollments
+ students
+(3 rows)
+
+ table_name  | rows 
+-------------+------
+ courses     |    7
+ enrollments |   17
+ students    |   10
+(3 rows)
+
+ id | student_id |  student_name   |            student_email             | course_id |      course_title      |  category   | enrollment_date | completion_percentage | passed | monthly_fee_paid | instructor  
+----+------------+-----------------+--------------------------------------+-----------+------------------------+-------------+-----------------+-----------------------+--------+------------------+-------------
+  1 |          1 | Emily Watson    | emily.watson@student.edutrack.com    |         1 | Intro to Python        | Programming | 2024-03-10      |                    85 | t      |            49.99 | Marta López
+  2 |          1 | Emily Watson    | emily.watson@student.edutrack.com    |         2 | Web Design Basics      | Design      | 2024-04-15      |                    60 | f      |            39.99 | Carlos Vega
+  3 |          2 | Klaus Weber     | klaus.weber@student.edutrack.com     |         1 | Intro to Python        | Programming | 2024-03-12      |                    92 | t      |            49.99 | Marta López
+  4 |          2 | Klaus Weber     | klaus.weber@student.edutrack.com     |         3 | Data Analysis with SQL | Data        | 2024-05-01      |                    78 | t      |            59.99 | Marta López
+  5 |          3 | Lucia Fernandes | lucia.fernandes@student.edutrack.com |         2 | Web Design Basics      | Design      | 2024-06-20      |                     5 | f      |            39.99 | Carlos Vega
+(5 rows)
+
