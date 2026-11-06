@@ -1,0 +1,120 @@
+run:
+  commit_sha: e446d9883294325009f58099e34a37c738a8322c
+  branch: cursor/edutrack-data-audit-f76c
+  base: main
+  pull_request: https://github.com/Picazo333/edutrack-data-audit-sql/pull/1
+  merged: false
+  postgres: "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
+  evidence_run_finished_at: "2026-11-06T09:12:56+00:00"
+  edutrack_sha256: faebf83f72bbf95d7ef55aad78f36fc9168891c36e8994eeb4a65629086e3387
+  queries_sha256: 3af333ff5e4bef38e30389c17e2feb1e8a03308b3cccb10d9a699c7d6ccbe6e0
+  students_hash: 9040195f9dbefe6f0bc3b431f4f81cbd
+  courses_hash: 13ff18accb70e8ce0394e19750c4865e
+  assert: pass
+  analysis_report_sha256: e36f3f5f7d7bc58b3c2727b170729379fdc678c11445b7433a994fca52290027
+  integrity_status: BLOCKED_INTEGRIDAD_MIGUEL
+  score: "29/31 PASS, 1 FAIL, 1 BLOCKED"
+  fail: [R31]
+  blocked: [R30]
+  r31_reason: "Las consultas las escribió un agente de IA y la decisión (escribirlas Miguel, declarar el uso de IA o no entregar) es de Miguel."
+  queries_and_report_untouched: true
+
+items:
+  - id: EV-LOAD
+    path: evidence/psql/01_load.txt
+    artifact_copy: /opt/cursor/artifacts/psql/01_load.txt
+    rubric: [R03, R25]
+    note: Carga de edutrack.sql y sha256 oficial.
+
+  - id: EV-IMPORT
+    path: evidence/psql/02_import_check.txt
+    artifact_copy: /opt/cursor/artifacts/psql/02_import_check.txt
+    rubric: [R04]
+    note: Las tres tablas existen. Conteos 7, 17 y 10. LIMIT 5 devuelve filas.
+
+  - id: EV-BEFORE
+    path: evidence/psql/03_snapshot_before.txt
+    artifact_copy: /opt/cursor/artifacts/psql/03_snapshot_before.txt
+    rubric: [R15, E01]
+    note: Agregados antes de Q6–Q8. Design 5, Programming ingreso 389.93.
+
+  - id: EV-FILTERS-BEFORE
+    path: evidence/psql/03b_filters_before.txt
+    artifact_copy: /opt/cursor/artifacts/psql/03b_filters_before.txt
+    rubric: [R05, R06, R08, R09, E01]
+    note: Filtros de Q1, Q2, Q4 y Q5 sobre la carga. 5, 4, 5 y 9 filas.
+
+  - id: EV-QUERIES
+    path: evidence/psql/04_queries.txt
+    artifact_copy: /opt/cursor/artifacts/psql/04_queries.txt
+    rubric: [R05, R06, R07, R08, R09, R10, R11, R12, R13, R16, R17, R18, R19, R21, R22, R23, E01]
+    note: Salida íntegra de queries.sql. INSERT 0 1 en la línea 57, UPDATE 2 en la 70, DELETE 2 en la 83.
+
+  - id: EV-AFTER
+    path: evidence/psql/05_snapshot_after.txt
+    artifact_copy: /opt/cursor/artifacts/psql/05_snapshot_after.txt
+    rubric: [R15, R16, R17, R18, R19, E01]
+    note: 16 inscripciones, 0 NULL, 0 @test.com, id 18 presente, agregados ya corregidos.
+
+  - id: EV-FILTERS-AFTER
+    path: evidence/psql/05b_filters_after.txt
+    artifact_copy: /opt/cursor/artifacts/psql/05b_filters_after.txt
+    rubric: [E01]
+    note: Los mismos filtros al final. 4, 5, 5 y 10 filas.
+
+  - id: EV-ASSERT
+    path: evidence/psql/06_assert.txt
+    artifact_copy: /opt/cursor/artifacts/psql/06_assert.txt
+    rubric: [R10, R11, R12, R24, E02]
+    note: El bloque DO termina sin EXCEPTION.
+
+  - id: EV-STAMP
+    path: evidence/psql/07_run_stamp.txt
+    artifact_copy: /opt/cursor/artifacts/psql/07_run_stamp.txt
+    rubric: [R21, R24, R25, E02]
+    note: assert=pass, hashes de students y courses, versión de PostgreSQL.
+
+  - id: EV-QUERIES-SQL
+    path: queries.sql
+    rubric: [R01, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R26, E02]
+    lines: "1-207"
+
+  - id: EV-REPORT
+    path: analysis_report.md
+    rubric: [R02, R22, R23, S01, E01]
+    lines: "1-261"
+
+  - id: EV-SQL-ASSET
+    path: edutrack.sql
+    rubric: [R03, R10, R25]
+    lines: "109-127"
+    note: Comentario MISSING RECORD. Archivo byte a byte del asset oficial.
+
+  - id: EV-RUNNER
+    path: scripts/recreate_and_run.sh
+    rubric: [R03, R13, R14, R24, R25, R26, E02]
+
+  - id: EV-ASSERT-SQL
+    path: scripts/assert_after.sql
+    rubric: [R10, R11, R12, R24, E02]
+
+  - id: EV-README
+    path: README.md
+    rubric: [R28, R30]
+    lines: "49-61"
+    note: Pasos de Supabase. R30 sigue BLOCKED porque esos pasos no se ejecutaron allí.
+
+  - id: EV-PR
+    path: https://github.com/Picazo333/edutrack-data-audit-sql/pull/1
+    rubric: [R27]
+    note: PR abierto contra main. Sin merge.
+
+  - id: EV-R31
+    path: OFFICIAL_README.md
+    lines: "116"
+    rubric: [R31]
+    result: FAIL
+    note: "Do not use AI tools to generate your SQL queries. Write each one yourself. Las consultas las escribió un agente de IA y la decisión (escribirlas Miguel, declarar el uso de IA o no entregar) es de Miguel. queries.sql y analysis_report.md no se reescriben."
+
+screenshots: []
+screenshots_reason: "Sin interfaz. S04 no aplica. No se generaron PNG."
