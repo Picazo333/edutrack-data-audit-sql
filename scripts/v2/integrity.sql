@@ -1,0 +1,103 @@
+-- Suite de integridad referencial. EduTrack v2.
+-- Esperado justo después de importar edutrack_v2.sql, sin más escrituras:
+--   huérfanos por student_id = 0
+--   huérfanos por course_id = 0
+--   claves foráneas en enrollments = 2
+--   filas en las que monthly_fee_paid difiere de courses.monthly_fee = 0
+--   pares (student_id, course_id) repetidos = 0
+--   estudiantes sin inscripción = 1 (Giulia Romano)
+--   cursos sin inscripción = 1 (Email Campaigns)
+-- Las consultas de huérfanos usan LEFT JOIN, igual que Q9 y Q10.
+-- Un cero aquí es el resultado de esta carga, no un valor inventado.
+
+-- I1: claves foráneas declaradas sobre enrollments
+SELECT
+    con.conname AS constraint_name,
+    pg_get_constraintdef(con.oid) AS definition
+FROM pg_constraint AS con
+INNER JOIN pg_class AS rel ON rel.oid = con.conrelid
+INNER JOIN pg_namespace AS ns ON ns.oid = rel.relnamespace
+WHERE con.contype = 'f'
+  AND ns.nspname = 'public'
+  AND rel.relname = 'enrollments'
+ORDER BY con.conname;
+
+-- I2: cuántas inscripciones quedan sin estudiante
+SELECT
+    COUNT(*) AS orphan_student_rows
+FROM enrollments AS e
+LEFT JOIN students AS s ON s.id = e.student_id
+WHERE s.id IS NULL;
+
+-- I3: cuántas inscripciones quedan sin curso
+SELECT
+    COUNT(*) AS orphan_course_rows
+FROM enrollments AS e
+LEFT JOIN courses AS c ON c.id = e.course_id
+WHERE c.id IS NULL;
+
+-- I4: filas huérfanas por student_id (esperado: ninguna)
+SELECT
+    e.id,
+    e.student_id,
+    e.course_id,
+    e.enrollment_date
+FROM enrollments AS e
+LEFT JOIN students AS s ON s.id = e.student_id
+WHERE s.id IS NULL
+ORDER BY e.id;
+
+-- I5: filas huérfanas por course_id (esperado: ninguna)
+SELECT
+    e.id,
+    e.student_id,
+    e.course_id,
+    e.enrollment_date
+FROM enrollments AS e
+LEFT JOIN courses AS c ON c.id = e.course_id
+WHERE c.id IS NULL
+ORDER BY e.id;
+
+-- I6: pago histórico distinto del precio actual del curso (esperado: ninguna)
+SELECT
+    e.id,
+    c.title AS course_title,
+    e.monthly_fee_paid,
+    c.monthly_fee
+FROM enrollments AS e
+INNER JOIN courses AS c ON c.id = e.course_id
+WHERE e.monthly_fee_paid <> c.monthly_fee
+ORDER BY e.id;
+
+-- I7: el mismo estudiante inscrito más de una vez en el mismo curso (esperado: ninguna)
+SELECT
+    e.student_id,
+    e.course_id,
+    COUNT(*) AS pair_count
+FROM enrollments AS e
+GROUP BY e.student_id, e.course_id
+HAVING COUNT(*) > 1
+ORDER BY e.student_id, e.course_id;
+
+-- I8: inscripciones por instructor (contexto del recuento de estudiantes distintos de Q8)
+SELECT
+    c.instructor_name,
+    COUNT(e.id) AS enrollment_count,
+    COUNT(DISTINCT e.student_id) AS student_count
+FROM courses AS c
+LEFT JOIN enrollments AS e ON e.course_id = c.id
+GROUP BY c.instructor_name
+ORDER BY c.instructor_name;
+
+-- I9: estudiantes sin inscripción y cursos sin inscripción
+SELECT
+    COUNT(*) AS students_without_enrollment
+FROM students AS s
+LEFT JOIN enrollments AS e ON e.student_id = s.id
+WHERE e.id IS NULL;
+
+SELECT
+    COUNT(*) AS courses_without_enrollment
+FROM courses AS c
+LEFT JOIN enrollments AS e ON e.course_id = c.id
+WHERE e.id IS NULL;

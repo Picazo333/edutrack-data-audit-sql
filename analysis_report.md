@@ -1,186 +1,146 @@
-# Auditoría de datos de EduTrack
+# Auditoría de datos de EduTrack — esquema normalizado
 
-Revisión de la tabla `enrollments` antes del ciclo de reporte del Q3. Las tablas `students` y `courses` se usaron solo como contexto: su contenido queda igual que en la carga.
+Revisión de `students`, `courses` y `enrollments` después de la migración. Ninguna de las preguntas se responde con una sola tabla: cada consulta une al menos dos.
 
-Corrida de referencia: PostgreSQL 16.15, 2026-11-06T09:12:56+00:00. Las tablas de Q1 a Q12 salen de `evidence/psql/04_queries.txt`. El antes y el después salen de `evidence/psql/03_snapshot_before.txt`, `evidence/psql/03b_filters_before.txt`, `evidence/psql/05_snapshot_after.txt` y `evidence/psql/05b_filters_after.txt`.
+Corrida de referencia: PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1), 2026-11-06T09:32:23+00:00. El sello está en `evidence/psql-v2/06_run_stamp.txt`. Las tablas de Q1 a Q10 salen de `evidence/psql-v2/03_queries.txt`. La carga y las tres comprobaciones `LIMIT 5` salen de `evidence/psql-v2/02_import_check.txt`.
 
-En la salida cruda de `psql`, `false` se imprime como `f` y un `NULL` se imprime como celda vacía. En este informe esas celdas se escriben `false` y `NULL`.
+En la salida cruda de `psql`, un resultado vacío se imprime como `(0 rows)`. En este informe eso se escribe **0 filas**.
 
 ## Cómo está ordenado
 
-Q1–Q5 leen las 17 inscripciones importadas. Q6–Q8 corrigen. Q9–Q12 agregan las 16 inscripciones que quedan. La última sección compara los dos momentos. El resultado oficial de cada consulta es el de su propia sección, en ese orden.
+Q1–Q3 son INNER JOIN. Q4 y Q5 son LEFT JOIN y se quedan con el lado que no encuentra pareja. Q6–Q8 agregan. Q9 y Q10 buscan huérfanos. El resultado de cada consulta es el de su sección.
 
 ## Resumen
 
-- La carga trae 17 inscripciones, 2 con instructor vacío y 2 de cuentas `@test.com`.
-- Q2 marca 4 inscripciones por debajo del 10 % de avance. Dos de ellas son las mismas que llegaron sin instructor (UI/UX Fundamentals).
-- Q6 añade la inscripción 18 de Lucia Fernandes en Advanced Python (2025-04-01, avance 0, cuota 69.99, instructor Carlos Vega).
-- Q7 escribe `Pending assignment` en las 2 filas con instructor `NULL`.
-- Q8 borra las inscripciones de `james.miller@test.com` y `alex.chen@test.com`. Esas dos personas siguen en `students`.
-- Después de corregir quedan 16 inscripciones. Programming sigue en 7 (sale una de prueba y entra la de Lucia). Design baja de 5 a 4.
-- El único curso con más de 3 inscripciones es Intro to Python: 5 antes del borrado y 4 después.
-- Ingreso cobrado después de corregir: Programming 409.93, Data 179.97, Design 169.96, Marketing 59.98. El total de esas cuatro cifras es 819.84. Antes de corregir era 839.83.
-- El promedio de avance más bajo es UI/UX Fundamentals (0). El más alto, después de quitar la cuenta de prueba, es Intro to Python (80).
+- La carga trae 8 estudiantes, 7 cursos y 16 inscripciones.
+- Los 7 estudiantes que tienen alguna inscripción están en más de un curso. Emily Watson y Lucia Fernandes tienen 3. Los otros cinco tienen 2.
+- Giulia Romano se registró el 2024-05-07 y no tiene ninguna inscripción.
+- Email Campaigns está en el catálogo, a 19.99, y nadie se ha inscrito.
+- Hay 6 inscripciones aprobadas, de 4 estudiantes. Klaus Weber y Marco Rossi aprobaron dos cursos cada uno.
+- El avance medio más alto es el de Marta López: 66.1428571428571429. El más bajo es Pending assignment, el instructor de UI/UX Fundamentals: 0.00000000000000000000.
+- La categoría con más ingreso, al precio actual del curso, es Programming: 409.93. Siguen Data (179.97), Design (169.96) y Marketing (59.98).
+- No hay inscripciones huérfanas: 0 filas por `student_id` y 0 filas por `course_id`.
 
-## Q1 — Inscripciones en 'Intro to Python'
+## Integridad referencial
 
-Resultado: 5
+> **0 inscripciones huérfanas** después de importar `edutrack_v2.sql`.
+> Ningún `student_id` apunta a un estudiante que no exista. Ningún `course_id` apunta a un curso que no exista.
 
-| student_name | student_email | completion_percentage |
+| Comprobación | Filas huérfanas |
+| --- | --- |
+| `enrollments.student_id` sin fila en `students` | 0 |
+| `enrollments.course_id` sin fila en `courses` | 0 |
+
+Q9 y Q10 son esas dos comprobaciones, con LEFT JOIN y `IS NULL` en la tabla del lado derecho. La salida de cada una trae las columnas y **0 filas**. La suite `scripts/v2/integrity.sql` repite el control, lista las claves foráneas y falla la corrida si el cero no se cumple. El detalle está en `evidence/psql-v2/04_integrity.txt` y el cierre en `evidence/psql-v2/05_assert.txt`.
+
+El archivo oficial ya declara las dos claves (`student_id` → `students.id`, `course_id` → `courses.id`). Por eso una inserción huérfana no entra mientras esas claves sigan activas. Las consultas no se apoyan en el catálogo: miran las filas. En esta carga el resultado es 0 filas. Si el cero cambiara, el script termina con error.
+
+## Diagrama
+
+![Tablas students, courses y enrollments](diagram.png)
+
+`diagram.png` es la exportación PNG de [diagram.4geeks.com](https://diagram.4geeks.com) a partir de `diagram.4geeks.json` (modo lectura del propio sitio, control Export as PNG). El registro está en `evidence/diagram/export_log.txt`.
+
+El dibujo lleva las tres tablas, la clave primaria `id` y las foráneas `student_id` y `course_id`. Esos nombres siguen la convención `table_name_id`. La herramienta pinta cada clave foránea como uno-a-muchos, que es la cardinalidad real de cada una:
+
+- `students` 1 — n `enrollments`
+- `courses` 1 — n `enrollments`
+- `students` n — m `courses`, resuelta por `enrollments` (no hay una línea directa entre las dos)
+
+No hay ninguna relación 1:1 en este esquema, así que el diagrama no inventa una. `diagram.dbml` repite las mismas cardinalidades con los tipos SQL del asset (`varchar`, `decimal`, `boolean`). La herramienta solo ofrece number, string, date y boolean; el DBML no sustituye a la imagen.
+
+## Q1 — Cada inscripción
+
+Resultado: 16
+
+| student_name | course_title | completion_percentage |
 | --- | --- | --- |
-| Emily Watson | emily.watson@student.edutrack.com | 85 |
-| James Miller | james.miller@test.com | 30 |
-| Klaus Weber | klaus.weber@student.edutrack.com | 92 |
-| Marco Rossi | marco.rossi@student.edutrack.com | 88 |
-| Priya Sharma | priya.sharma@student.edutrack.com | 55 |
+| Emily Watson | Advanced Python | 40 |
+| Emily Watson | Intro to Python | 85 |
+| Emily Watson | Web Design Basics | 60 |
+| Klaus Weber | Data Analysis with SQL | 78 |
+| Klaus Weber | Intro to Python | 92 |
+| Lucia Fernandes | Advanced Python | 0 |
+| Lucia Fernandes | Digital Marketing 101 | 3 |
+| Lucia Fernandes | Web Design Basics | 5 |
+| Marco Rossi | Advanced Python | 95 |
+| Marco Rossi | Intro to Python | 88 |
+| Pierre Dubois | Data Analysis with SQL | 20 |
+| Pierre Dubois | UI/UX Fundamentals | 0 |
+| Priya Sharma | Digital Marketing 101 | 70 |
+| Priya Sharma | Intro to Python | 55 |
+| Yuki Nakamura | Data Analysis with SQL | 45 |
+| Yuki Nakamura | UI/UX Fundamentals | 0 |
 
-Cuatro alumnos reales y una cuenta de prueba. James Miller sigue en esta lista porque el borrado es Q8. El avance va de 30 a 92.
+El INNER JOIN deja fuera a Giulia Romano y a Email Campaigns. Las 16 filas tienen estudiante y curso. Emily Watson y Lucia Fernandes aparecen tres veces, una por curso.
 
-## Q2 — Avance menor que 10
+## Q2 — Cursos aprobados
 
-Resultado: 4
+Resultado: 6 filas, 4 estudiantes
 
-| id | student_name | student_email | course_title | completion_percentage |
-| --- | --- | --- | --- | --- |
-| 10 | Yuki Nakamura | yuki.nakamura@student.edutrack.com | UI/UX Fundamentals | 0 |
-| 11 | Pierre Dubois | pierre.dubois@student.edutrack.com | UI/UX Fundamentals | 0 |
-| 6 | Lucia Fernandes | lucia.fernandes@student.edutrack.com | Digital Marketing 101 | 3 |
-| 5 | Lucia Fernandes | lucia.fernandes@student.edutrack.com | Web Design Basics | 5 |
+| student_name | student_email | course_title |
+| --- | --- | --- |
+| Emily Watson | emily.watson@student.edutrack.com | Intro to Python |
+| Klaus Weber | klaus.weber@student.edutrack.com | Data Analysis with SQL |
+| Klaus Weber | klaus.weber@student.edutrack.com | Intro to Python |
+| Marco Rossi | marco.rossi@student.edutrack.com | Advanced Python |
+| Marco Rossi | marco.rossi@student.edutrack.com | Intro to Python |
+| Priya Sharma | priya.sharma@student.edutrack.com | Digital Marketing 101 |
 
-Son las candidatas a abandono en el momento de la consulta. Alex Chen queda fuera: su avance es 10 y el filtro es estrictamente menor que 10. Lucia Fernandes aparece dos veces, en dos cursos distintos.
+El filtro es `passed = true`, unido al estudiante y al curso. Klaus Weber y Marco Rossi aprobaron dos cursos, así que salen dos veces: la pregunta pide el título de cada curso aprobado, no un estudiante por fila. Emily Watson solo tiene aprobado Intro to Python (Web Design Basics está al 60 y Advanced Python al 40, los dos sin aprobar). Lucia Fernandes, Pierre Dubois, Yuki Nakamura y Giulia Romano no aparecen.
 
-## Q3 — Instructor NULL
+## Q3 — Avance medio por instructor
 
-Resultado: 2
+Resultado: 4, de mayor a menor. El valor es `AVG(completion_percentage)` sin redondear.
 
-| id | student_name | student_email | course_title | instructor |
-| --- | --- | --- | --- | --- |
-| 10 | Yuki Nakamura | yuki.nakamura@student.edutrack.com | UI/UX Fundamentals | NULL |
-| 11 | Pierre Dubois | pierre.dubois@student.edutrack.com | UI/UX Fundamentals | NULL |
-
-Las dos filas son de UI/UX Fundamentals y son también dos de los cuatro abandonos de Q2. El lote sin instructor y el avance en cero coinciden en el mismo curso.
-
-## Q4 — Cinco no aprobadas con mayor avance
-
-Resultado: 5
-
-| student_name | student_email | course_title | completion_percentage | passed |
-| --- | --- | --- | --- | --- |
-| Emily Watson | emily.watson@student.edutrack.com | Web Design Basics | 60 | false |
-| Priya Sharma | priya.sharma@student.edutrack.com | Intro to Python | 55 | false |
-| Yuki Nakamura | yuki.nakamura@student.edutrack.com | Data Analysis with SQL | 45 | false |
-| Emily Watson | emily.watson@student.edutrack.com | Advanced Python | 40 | false |
-| James Miller | james.miller@test.com | Intro to Python | 30 | false |
-
-El corte es por inscripción (`passed = false`, mayor `completion_percentage`, cinco filas). Emily Watson ocupa dos puestos, 60 y 40, porque tiene dos cursos sin aprobar. El quinto puesto es la cuenta de prueba de James Miller.
-
-## Q5 — Inscripciones desde 2024-07-01
-
-Resultado: 9
-
-| id | student_name | student_email | course_title | enrollment_date |
-| --- | --- | --- | --- | --- |
-| 17 | Emily Watson | emily.watson@student.edutrack.com | Advanced Python | 2025-03-05 |
-| 16 | Pierre Dubois | pierre.dubois@student.edutrack.com | Data Analysis with SQL | 2025-02-20 |
-| 15 | Priya Sharma | priya.sharma@student.edutrack.com | Intro to Python | 2025-01-10 |
-| 12 | Priya Sharma | priya.sharma@student.edutrack.com | Digital Marketing 101 | 2024-12-01 |
-| 11 | Pierre Dubois | pierre.dubois@student.edutrack.com | UI/UX Fundamentals | 2024-11-05 |
-| 10 | Yuki Nakamura | yuki.nakamura@student.edutrack.com | UI/UX Fundamentals | 2024-10-11 |
-| 9 | Yuki Nakamura | yuki.nakamura@student.edutrack.com | Data Analysis with SQL | 2024-09-03 |
-| 8 | Marco Rossi | marco.rossi@student.edutrack.com | Intro to Python | 2024-08-09 |
-| 6 | Lucia Fernandes | lucia.fernandes@student.edutrack.com | Digital Marketing 101 | 2024-07-01 |
-
-La fecha `2024-07-01` entra en el resultado. La inscripción de Alex Chen es del `2024-06-30` y queda fuera. La fila 18 todavía no existe en este punto, así que su fecha `2025-04-01` no aparece aquí.
-
-## Q6 — Inscripción que faltaba
-
-Resultado: 1 fila insertada, `id = 18`.
-
-La comprobación anterior, con el mismo estudiante, curso y fecha, devolvió 0 filas. El `INSERT` usa los valores del comentario `MISSING RECORD` de `edutrack.sql`.
-
-| id | student_id | student_name | student_email | course_id | course_title | category | enrollment_date | completion_percentage | passed | monthly_fee_paid | instructor |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 18 | 3 | Lucia Fernandes | lucia.fernandes@student.edutrack.com | 5 | Advanced Python | Programming | 2025-04-01 | 0 | false | 69.99 | Carlos Vega |
-
-La etiqueta de comando fue `INSERT 0 1`.
-
-## Q7 — Instructor por defecto
-
-Resultado: 2 filas actualizadas.
-
-El `SELECT` previo, con `instructor IS NULL`, devolvió las filas 10 y 11. El `UPDATE` escribió `Pending assignment` solo en esas filas. La etiqueta de comando fue `UPDATE 2`.
-
-| id | student_name | student_email | course_title | instructor |
-| --- | --- | --- | --- | --- |
-| 10 | Yuki Nakamura | yuki.nakamura@student.edutrack.com | UI/UX Fundamentals | Pending assignment |
-| 11 | Pierre Dubois | pierre.dubois@student.edutrack.com | UI/UX Fundamentals | Pending assignment |
-
-La fila 18 no entra en esta corrección: ya llega con instructor Carlos Vega.
-
-## Q8 — Borrado de cuentas @test.com
-
-Resultado: 2 filas eliminadas.
-
-El `SELECT` previo y el `DELETE` usan el mismo filtro (`student_email LIKE '%@test.com'`). La etiqueta de comando fue `DELETE 2`.
-
-| id | student_name | student_email | course_title | category | completion_percentage | monthly_fee_paid |
-| --- | --- | --- | --- | --- | --- | --- |
-| 13 | James Miller | james.miller@test.com | Intro to Python | Programming | 30 | 49.99 |
-| 14 | Alex Chen | alex.chen@test.com | Web Design Basics | Design | 10 | 39.99 |
-
-Esas dos filas salen de `enrollments`. Las cuentas siguen en `students`. Después del alta y de este borrado la tabla queda en 16 inscripciones.
-
-## Q9 — Inscripciones por categoría
-
-Resultado:
-
-- Programming: 7
-- Design: 4
-- Data: 3
-- Marketing: 2
-
-| category | enrollment_count |
+| instructor_name | avg_completion_percentage |
 | --- | --- |
-| Programming | 7 |
-| Design | 4 |
-| Data | 3 |
-| Marketing | 2 |
+| Marta López | 66.1428571428571429 |
+| Carlos Vega | 40.0000000000000000 |
+| Lucia Prades | 36.5000000000000000 |
+| Pending assignment | 0.00000000000000000000 |
 
-Suman 16. Programming no cambia de conteo respecto a la carga: pierde a James Miller y gana a Lucia Fernandes. Design pierde a Alex Chen y baja de 5 a 4. Data y Marketing no se mueven.
+Marta López da Intro to Python y Data Analysis with SQL. Las siete inscripciones suman 463 (85, 92, 88, 55, 78, 45 y 20) y el promedio es 463/7, que PostgreSQL escribe 66.1428571428571429. Carlos Vega queda en 40 con cinco inscripciones (60, 5, 95, 40 y 0). Lucia Prades queda en 36.5: solo entran las dos de Digital Marketing 101 (3 y 70). Email Campaigns no tiene inscripciones y el INNER JOIN no lo mete en el promedio. Pending assignment es UI/UX Fundamentals, las dos inscripciones en 0.
 
-## Q10 — Promedio de avance por curso
-
-Resultado: 6 cursos, de menor a mayor promedio. El valor es `AVG(completion_percentage)` sin redondear en la consulta.
-
-| course_title | avg_completion_percentage |
-| --- | --- |
-| UI/UX Fundamentals | 0.00000000000000000000 |
-| Web Design Basics | 32.5000000000000000 |
-| Digital Marketing 101 | 36.5000000000000000 |
-| Advanced Python | 45.0000000000000000 |
-| Data Analysis with SQL | 47.6666666666666667 |
-| Intro to Python | 80.0000000000000000 |
-
-UI/UX Fundamentals es el curso con peor avance: las dos inscripciones están en 0. Intro to Python es el más alto. Data Analysis with SQL queda en 47.6666666666666667, que es el promedio exacto de tres enteros (143 / 3). Email Campaigns no tiene inscripciones y por eso no sale en el agrupado.
-
-## Q11 — Cursos con más de 3 inscripciones
+## Q4 — Estudiantes sin inscripción
 
 Resultado: 1
 
-| course_title | enrollment_count |
+| id | name | email | signup_date |
+| --- | --- | --- | --- |
+| 8 | Giulia Romano | giulia.romano@student.edutrack.com | 2024-05-07 |
+
+LEFT JOIN de `students` hacia `enrollments`, y `e.id IS NULL`. Giulia Romano está en `students` desde el 2024-05-07 y no tiene ninguna fila en `enrollments`. Los otros siete estudiantes quedan fuera de esta consulta porque sí tienen pareja.
+
+## Q5 — Cursos sin inscripción
+
+Resultado: 1
+
+| id | title | category | instructor_name | monthly_fee |
+| --- | --- | --- | --- | --- |
+| 7 | Email Campaigns | Marketing | Lucia Prades | 19.99 |
+
+LEFT JOIN de `courses` hacia `enrollments`, y `e.id IS NULL`. Email Campaigns existe en el catálogo y nadie se ha apuntado. Los otros seis cursos tienen al menos una inscripción y no salen aquí.
+
+## Q6 — Más de un curso
+
+Resultado: 7
+
+| student_name | course_count |
 | --- | --- |
-| Intro to Python | 4 |
+| Emily Watson | 3 |
+| Lucia Fernandes | 3 |
+| Klaus Weber | 2 |
+| Marco Rossi | 2 |
+| Pierre Dubois | 2 |
+| Priya Sharma | 2 |
+| Yuki Nakamura | 2 |
 
-`HAVING COUNT(*) > 3` deja fuera a Data Analysis with SQL y a Advanced Python, que se quedan en 3. El umbral es estricto: 3 no basta.
+`GROUP BY` del estudiante y `HAVING COUNT(e.course_id) > 1`. El umbral es estricto: una sola inscripción no basta, y en esta carga nadie está en exactamente un curso. Giulia Romano no entra porque el INNER JOIN exige alguna inscripción. Emily Watson y Lucia Fernandes encabezan la lista, con 3.
 
-## Q12 — Ingresos por categoría
+## Q7 — Ingreso por categoría
 
-Resultado:
-
-- Programming: 409.93
-- Data: 179.97
-- Design: 169.96
-- Marketing: 59.98
+Resultado: Programming es la categoría que más ingreso aporta.
 
 | category | total_revenue |
 | --- | --- |
@@ -189,73 +149,43 @@ Resultado:
 | Design | 169.96 |
 | Marketing | 59.98 |
 
-La suma de las cuatro categorías es 819.84. Programming aporta algo más de la mitad. Marketing es la categoría con menos inscripciones y con menos ingreso. Design queda por debajo de Data: antes de quitar la cuenta de prueba iba por encima.
+La suma es `SUM(courses.monthly_fee)` por cada inscripción, no `monthly_fee_paid`. Programming reúne 4 inscripciones de Intro to Python a 49.99 (199.96) y 3 de Advanced Python a 69.99 (209.97): 409.93. Data son 3 inscripciones de Data Analysis with SQL a 59.99: 179.97. Design son 2 de Web Design Basics a 39.99 (79.98) y 2 de UI/UX Fundamentals a 44.99 (89.98): 169.96. Marketing son 2 de Digital Marketing 101 a 29.99: 59.98. Email Campaigns, a 19.99, no suma porque no tiene inscripciones.
 
-## Antes y después de las correcciones (Q6–Q8)
+Las cuatro cifras suman 819.84. La mitad de ese total es 409.92, así que Programming queda un céntimo por encima de la mitad. En esta carga el pago histórico de cada inscripción coincide con el precio actual del curso (la comprobación I6 de la suite devuelve 0 filas). La consulta no usa esa columna.
 
-Esta sección complementa a Q1–Q12. El resultado oficial de cada consulta sigue en su propia sección. Aquí se ve qué movieron el alta, el relleno del instructor y el borrado.
+## Q8 — Estudiantes por instructor
 
-### Estado de la tabla
+Resultado: 4
 
-| Medida | Antes | Después |
-| --- | --- | --- |
-| Inscripciones | 17 | 16 |
-| Filas en `students` | 10 | 10 |
-| Filas en `courses` | 7 | 7 |
-| Instructor `NULL` | 2 | 0 |
-| Inscripciones `@test.com` | 2 | 0 |
-| Fila `id = 18` | 0 | 1 |
+| instructor_name | student_count |
+| --- | --- |
+| Marta López | 6 |
+| Carlos Vega | 3 |
+| Lucia Prades | 2 |
+| Pending assignment | 2 |
 
-El hash del contenido de `students` y el de `courses` coinciden antes y después (`9040195f9dbefe6f0bc3b431f4f81cbd` y `13ff18accb70e8ce0394e19750c4865e` en `evidence/psql/07_run_stamp.txt`).
+`student_count` es `COUNT(DISTINCT student_id)`: una persona inscrita en dos cursos del mismo instructor cuenta una vez. Marta López tiene 7 inscripciones y 6 estudiantes, porque Klaus Weber está en Intro to Python y en Data Analysis with SQL. Carlos Vega tiene 5 inscripciones y 3 estudiantes: Emily Watson y Lucia Fernandes cursan Web Design Basics y Advanced Python, y Marco Rossi cursa Advanced Python. Lucia Prades tiene a Lucia Fernandes y a Priya Sharma en Digital Marketing 101. Pending assignment tiene a Yuki Nakamura y a Pierre Dubois en UI/UX Fundamentals. El LEFT JOIN dejaría en la lista a un instructor con cero estudiantes; en esta carga ninguno está a cero. El desglose de inscripciones frente a estudiantes está en la comprobación I8 de `evidence/psql-v2/04_integrity.txt`.
 
-### Conteos e ingresos
+## Q9 — Huérfanos por estudiante
 
-| category | Inscripciones antes | Inscripciones después | Ingreso antes | Ingreso después | Diferencia de ingreso |
-| --- | --- | --- | --- | --- | --- |
-| Programming | 7 | 7 | 389.93 | 409.93 | +20.00 |
-| Design | 5 | 4 | 209.95 | 169.96 | -39.99 |
-| Data | 3 | 3 | 179.97 | 179.97 | 0.00 |
-| Marketing | 2 | 2 | 59.98 | 59.98 | 0.00 |
+Resultado: **0 filas**
 
-El ingreso total pasa de 839.83 a 819.84, una baja de 19.99. Esa cifra es la cuota añadida (69.99) menos las dos cuotas de prueba que salen con el borrado (49.99 de James Miller y 39.99 de Alex Chen). El orden por ingreso cambia: antes era Programming, Design, Data, Marketing; después es Programming, Data, Design, Marketing.
-
-### Promedio de avance
-
-| course_title | Promedio antes | Promedio después |
-| --- | --- | --- |
-| UI/UX Fundamentals | 0.00000000000000000000 | 0.00000000000000000000 |
-| Web Design Basics | 25.0000000000000000 | 32.5000000000000000 |
-| Digital Marketing 101 | 36.5000000000000000 | 36.5000000000000000 |
-| Data Analysis with SQL | 47.6666666666666667 | 47.6666666666666667 |
-| Advanced Python | 67.5000000000000000 | 45.0000000000000000 |
-| Intro to Python | 70.0000000000000000 | 80.0000000000000000 |
-
-Advanced Python baja porque Q6 añade una inscripción con avance 0. Intro to Python sube porque Q8 quita la inscripción de James Miller, que en Q1 y en Q4 está al 30 %. Web Design Basics sube al quitar la inscripción de Alex Chen. UI/UX, Data Analysis with SQL y Digital Marketing 101 se quedan en el mismo promedio.
-
-### Cursos por encima de 3 inscripciones
-
-| Momento | course_title | enrollment_count |
-| --- | --- | --- |
-| Antes | Intro to Python | 5 |
-| Después | Intro to Python | 4 |
-
-Sigue habiendo un solo curso por encima del umbral. El conteo de ese curso baja en uno.
-
-### Los mismos filtros de Q1, Q2, Q4 y Q5, repetidos al final
-
-Dentro de `queries.sql`, Q1–Q5 se ejecutan una sola vez, antes de corregir. La tabla siguiente repite esos filtros al final para medir el efecto. La salida está en `evidence/psql/05b_filters_after.txt`.
-
-| Filtro | Filas en Q1–Q5 | Filas si se repite al final | Qué cambia |
+| id | student_id | course_id | enrollment_date |
 | --- | --- | --- | --- |
-| Intro to Python | 5 | 4 | Sale James Miller. |
-| Avance menor que 10 | 4 | 5 | Entra Lucia Fernandes, Advanced Python, avance 0 (`id` 18). |
-| Cinco no aprobadas con mayor avance | 5 | 5 | El quinto puesto pasa de James Miller (30) a Pierre Dubois, Data Analysis with SQL (20). |
-| Fecha desde 2024-07-01 | 9 | 10 | Entra la fila 18, con fecha 2025-04-01, la primera de la lista. |
 
-El resultado oficial de Q2 sigue siendo 4 filas: esa consulta corre antes del `INSERT`. La quinta fila, Lucia Fernandes en Advanced Python con avance 0, aparece solo cuando el filtro se repite al final.
+LEFT JOIN de `enrollments` hacia `students` y `s.id IS NULL`. No hay ninguna inscripción cuyo `student_id` no exista en `students`. Es el mismo cero de la sección de integridad.
+
+## Q10 — Huérfanos por curso
+
+Resultado: **0 filas**
+
+| id | student_id | course_id | enrollment_date |
+| --- | --- | --- | --- |
+
+LEFT JOIN de `enrollments` hacia `courses` y `c.id IS NULL`. No hay ninguna inscripción cuyo `course_id` no exista en `courses`.
 
 ## Alcance
 
-El trabajo de corrección vive en `enrollments`. `students` conserva a James Miller y a Alex Chen. `courses` sigue con 7 filas, incluida Email Campaigns, que no tiene inscripciones.
+Las consultas solo leen. No hay altas, cambios ni borrados, y no se pide probar el borrado en cascada.
 
-Los números de arriba son los de la corrida local. Para repetirlos en el SQL Editor de Supabase, el orden es el de `README.md`: primero `edutrack.sql`, después `queries.sql` de una sola vez.
+Los números de arriba son los de la corrida local. Para repetirlos en el SQL Editor de Supabase hace falta un proyecto ya creado (el de la auditoría anterior vale): pegar `edutrack_v2.sql`, comprobar las tres consultas `LIMIT 5`, y pegar `queries.sql`. El orden y el contraste con este informe están en `README.md`. Esta corrida no ejecutó ese editor.

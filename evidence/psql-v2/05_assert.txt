@@ -1,0 +1,7 @@
+# aserciones
+DO
+   result    
+-------------
+ assert=pass
+(1 row)
+

@@ -1,0 +1,33 @@
+{
+  "started_at": "2026-11-06T09:17:00+00:00",
+  "ended_at": "2026-11-06T09:35:55+00:00",
+  "started_at_source": "Marca de tiempo del encargo, 9:17 UTC.",
+  "ended_at_source": "date -Iseconds al cerrar los documentos de auditoría, antes de este archivo y del commit.",
+  "eval_repair_iterations": 0,
+  "eval_cycles": 1,
+  "failures_found": [],
+  "repair_notes": [
+    "La primera ejecución de scripts/recreate_and_run_v2.sh terminó en 0. No hubo un ciclo de reparación del SQL.",
+    "scripts/recreate_and_run.sh también terminó en 0 tras mover las rutas a 019/. La evidencia plana solo difería en la hora del sello; se restauró evidence/psql/ para no reescribir la corrida ya guardada del 019."
+  ],
+  "verification_commands": [
+    "./scripts/recreate_and_run_v2.sh",
+    "./scripts/recreate_and_run.sh",
+    "NODE_PATH=/tmp/node_modules node scripts/export_diagram.cjs",
+    "sha256sum -c 019/SHA256SUMS",
+    "sha256sum edutrack_v2.sql"
+  ],
+  "tokens_used": null,
+  "tokens_unmeasurable_reason": "Esta sesión no expone un contador de tokens. No hay una cifra real que copiar y no se inventa una.",
+  "tokens_proxy": {
+    "method": "Bytes del workspace sin .git, y diff contra HEAD con git add -N, medidos antes de escribir TELEMETRY.json.",
+    "workspace_files": 45,
+    "workspace_bytes": 256120,
+    "diff_files": 31,
+    "diff_insertions": 2447,
+    "diff_deletions": 399,
+    "duration_seconds": 1135,
+    "duration_from": "2026-11-06T09:17:00+00:00",
+    "duration_to": "2026-11-06T09:35:55+00:00"
+  }
+}
