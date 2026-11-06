@@ -1,79 +1,67 @@
-# Justificación de la rúbrica — EduTrack Data Audit
+# Justificación de la rúbrica
 
-Commit: `e446d9883294325009f58099e34a37c738a8322c`
-Rama: `cursor/edutrack-data-audit-f76c`
-Pull request: https://github.com/Picazo333/edutrack-data-audit-sql/pull/1
-Motor: PostgreSQL 16.15 local. Corrida de evidencia: `2026-11-06T09:12:56+00:00`, `assert=pass`.
+Corrida de referencia: PostgreSQL 16.15, `2026-11-06T14:52:20+00:00`, sello en `evidence/psql-v2/06_run_stamp.txt`. El diagrama es la exportación PNG de diagram.4geeks.com, no un dibujo sustituto. `diagram.dbml` solo escribe los tipos SQL y las cardinalidades en texto; no se usa para dar por cumplido R05 ni R06.
 
-Resultado de lo puntuable: **29/31 PASS**, **0 FAIL**, **1 BLOCKED_HITL** (R30), **1 HITL_MIGUEL** (R31).
-
-29 + 0 + 1 + 1 = 31.
-
-Verificación de esta pasada: `./scripts/recreate_and_run.sh` el `2026-11-06T14:47:58+00:00`, `assert=pass`. La salida de Q1–Q12 coincide con `evidence/psql/04_queries.txt`. `queries.sql` sigue en sha256 `3af333ff5e4bef38e30389c17e2feb1e8a03308b3cccb10d9a699c7d6ccbe6e0`.
-
-## A. Enunciado
+30 obligatorios. 26 PASS, 0 FAIL, 2 BLOCKED_HITL, 1 HITL_MIGUEL, 1 HITL_ENVIO_MIGUEL. 26 + 0 + 2 + 1 + 1 = 30.
 
 | ID | Estado | Cómo se cumple | Evidencia |
 | --- | --- | --- | --- |
-| R01 | PASS | `queries.sql` está en la raíz y contiene Q1–Q12. | `queries.sql:1` y `queries.sql:11`–`queries.sql:206`. Commit `e446d98`. |
-| R02 | PASS | `analysis_report.md` está en la raíz. | `analysis_report.md:1`. |
-| R03 | PASS | El script recrea la base y carga el `edutrack.sql` oficial. La carga termina en `INSERT 0 17` para `enrollments`, sin error. | `scripts/recreate_and_run.sh` (paso de carga). `evidence/psql/01_load.txt:2` (sha256) y el `INSERT 0 17` de ese archivo. |
-| R04 | PASS | Tras la carga existen las tres tablas y tienen filas: `courses` 7, `enrollments` 17, `students` 10. `SELECT * FROM enrollments LIMIT 5` devuelve 5 filas. | `evidence/psql/02_import_check.txt` (lista `\dt`, conteos y las 5 primeras filas). |
-| R05 | PASS | Q1 filtra `course_title = 'Intro to Python'` y devuelve nombre, email y porcentaje. Resultado real: 5 filas. | `queries.sql:11`–`queries.sql:18`. Informe `analysis_report.md:25`. Salida en `evidence/psql/04_queries.txt` (primer result set, `(5 rows)`). |
-| R06 | PASS | Q2 filtra `completion_percentage < 10`. Resultado real: 4 filas (ids 10, 11, 6 y 5). Alex Chen, con avance 10, queda fuera. | `queries.sql:21`–`queries.sql:29`. Informe `analysis_report.md:39`. Misma salida en `04_queries.txt`. |
-| R07 | PASS | Q3 filtra `instructor IS NULL`. Resultado real: 2 filas, ids 10 y 11, ambas de UI/UX Fundamentals. | `queries.sql:32`–`queries.sql:40`. Informe `analysis_report.md:52`. |
-| R08 | PASS | Q4 filtra `passed = FALSE`, ordena por avance descendente y corta con `LIMIT 5`. Resultado real: Emily 60, Priya 55, Yuki 45, Emily 40, James 30. | `queries.sql:43`–`queries.sql:54`. Informe `analysis_report.md:63`. |
-| R09 | PASS | Q5 usa `enrollment_date >= DATE '2024-07-01'` y `ORDER BY enrollment_date DESC`. Resultado real: 9 filas, de `2025-03-05` a `2024-07-01` inclusive. | `queries.sql:57`–`queries.sql:65`. Informe `analysis_report.md:77`. |
-| R10 | PASS | Q6 inserta `id = 18` con los doce campos del comentario `MISSING RECORD`. La comprobación previa devolvió 0 filas. La etiqueta fue `INSERT 0 1`. La aserción compara nombre, email, curso, fecha, avance 0, `passed` false, cuota 69.99 e instructor Carlos Vega. | Valores fuente: `edutrack.sql:109`–`edutrack.sql:127`. Consulta: `queries.sql:68`–`queries.sql:126`. Etiqueta: `evidence/psql/04_queries.txt:57`. Aserción: `scripts/assert_after.sql` (bloque Q6) y `evidence/psql/06_assert.txt` (`DO` sin excepción). Informe: `analysis_report.md:95`. |
-| R11 | PASS | Q7 hace `SET instructor = 'Pending assignment'` solo con `WHERE instructor IS NULL`. Etiqueta `UPDATE 2`. Las filas devueltas son la 10 y la 11. La fila 1 sigue con Marta López (lo comprueba la aserción). | `queries.sql:140`–`queries.sql:142`. `evidence/psql/04_queries.txt:70`. Informe `analysis_report.md:107`. |
-| R12 | PASS | Q8 borra con `student_email LIKE '%@test.com'`. Etiqueta `DELETE 2`: James Miller (id 13, Intro to Python, 49.99) y Alex Chen (id 14, Web Design Basics, 39.99). La aserción exige que esas ids no sigan en `enrollments` y que las cuentas sigan en `students`. | `queries.sql:165`–`queries.sql:166`. `evidence/psql/04_queries.txt:83`. Informe `analysis_report.md:120`. |
-| R13 | PASS | El `SELECT` de Q7 (`queries.sql:130`) está antes del `UPDATE` (`queries.sql:140`) y usa el mismo `WHERE instructor IS NULL`. El `SELECT` de Q8 (`queries.sql:153`) está antes del `DELETE` (`queries.sql:165`) y usa el mismo `LIKE '%@test.com'`. El script de reproducción falla si ese orden no se cumple. | Esas líneas, más la comprobación estática en `scripts/recreate_and_run.sh` (mensaje `comprobación estática de queries.sql: ok` en la corrida). |
-| R14 | PASS | Los comentarios `-- Q1:` … `-- Q12:` aparecen en orden creciente. | `queries.sql:11`, `:21`, `:32`, `:43`, `:57`, `:68`, `:128`, `:150`, `:176`, `:184`, `:192`, `:201`. |
-| R15 | PASS | Q9 empieza en `queries.sql:176`, después del `DELETE` de Q8 (`queries.sql:165`). Los agregados del informe son los de después: Programming 7 / Design 4 / Data 3 / Marketing 2, no los de la foto previa (Design 5). | `queries.sql:176`. Foto previa: `evidence/psql/03_snapshot_before.txt`. Resultado Q9–Q12: `evidence/psql/04_queries.txt` y `evidence/psql/05_snapshot_after.txt`. |
-| R16 | PASS | Q9 es `COUNT(*)` con `GROUP BY category`. | `queries.sql:177`–`queries.sql:181`. Informe `analysis_report.md:133`. |
-| R17 | PASS | Q10 es `AVG(completion_percentage)` con `GROUP BY course_title` y `ORDER BY` ascendente. Seis cursos, de UI/UX en 0 a Intro to Python en 80. | `queries.sql:185`–`queries.sql:189`. Informe `analysis_report.md:151`. |
-| R18 | PASS | Q11 agrupa por curso y filtra con `HAVING COUNT(*) > 3`. Una fila: Intro to Python, 4. Data y Advanced Python se quedan en 3 y no salen. | `queries.sql:193`–`queries.sql:198`. Informe `analysis_report.md:166`. |
-| R19 | PASS | Q12 es `SUM(monthly_fee_paid)` con `GROUP BY category` y `ORDER BY total_revenue DESC`. Programming 409.93, Data 179.97, Design 169.96, Marketing 59.98. | `queries.sql:202`–`queries.sql:206`. Informe `analysis_report.md:176`. |
-| R20 | PASS | Cada bloque lleva un comentario `-- Qn:`. | Las líneas de R14. |
-| R21 | PASS | Las 12 consultas están en `queries.sql` y la corrida local termina sin error. `ON_ERROR_STOP` está activo. Esto no da por hecha la ejecución dentro de Supabase: eso es R30. | `evidence/psql/04_queries.txt` completo. `evidence/psql/07_run_stamp.txt:10` (`assert=pass`). `evidence/psql/06_assert.txt`. |
-| R22 | PASS | Cada tabla del informe se contrastó con `04_queries.txt` y con las fotos de antes y después. Una comprobación automática buscó en el informe y en la salida las cifras 409.93, 179.97, 169.96, 59.98, los promedios largos de `AVG`, `INSERT 0 1`, `UPDATE 2`, `DELETE 2` y `Pending assignment`. No faltó ninguna. | `analysis_report.md` frente a `evidence/psql/04_queries.txt`, `03_snapshot_before.txt` y `05_snapshot_after.txt`. |
-| R23 | PASS | Hay una sección por consulta, de Q1 a Q12, y cada una abre con `Resultado:` y los números de la corrida. Ninguna sección quedó en blanco. | `analysis_report.md:25`, `:39`, `:52`, `:63`, `:77`, `:95`, `:107`, `:120`, `:133`, `:151`, `:166`, `:176`. |
-| R24 | PASS | `queries.sql` no tiene `INSERT`/`UPDATE`/`DELETE` sobre `students` ni `courses`. El hash de ambas tablas es el mismo antes y después. Los conteos siguen en 10 y 7. Las cuentas `@test.com` siguen en `students`. | Comprobación estática del script. `evidence/psql/07_run_stamp.txt` (`students_hash` y `courses_hash`). Aserción en `scripts/assert_after.sql`. |
-| R25 | PASS | El SHA-256 del archivo cargado es el de `PROVENANCE.json`: `faebf83f72bbf95d7ef55aad78f36fc9168891c36e8994eeb4a65629086e3387`. El script aborta si no coincide. La fila 18 sale de ese comentario, no de una fila inventada. | `evidence/psql/01_load.txt:2`. `evidence/psql/07_run_stamp.txt:4`. `edutrack.sql:109`–`edutrack.sql:127`. |
-| R26 | PASS | `queries.sql` es SQL de PostgreSQL: `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `GROUP BY`, `HAVING`, `AVG`, `SUM`, `COUNT`, `DATE '...'`, `IS NULL`, `LIKE`, `RETURNING`. No hay metacomandos `\dt` ni sintaxis de otro motor. `SET datestyle` solo fija el formato de la sesión. | `queries.sql:8` y el resto del archivo. La comprobación estática rechaza una línea que empiece por `\`. |
-| R31 | HITL_MIGUEL | Criterio del enunciado, `OFFICIAL_README.md` línea 116. Declaración de autoría/uso de herramientas al entregar: decisión de Miguel. | `OFFICIAL_README.md:116`. `EVAL.md`. |
+| R01 | PASS | `edutrack_v2.sql` es la copia byte a byte del asset. SHA-256 `091f6fa2948d0847cfe06937b2d24572a0afa292fbd19412764c220d39e17cb0`, el de PROVENANCE. El script corta si no coincide. | `edutrack_v2.sql`; `scripts/recreate_and_run_v2.sh` líneas 92-101; `evidence/psql-v2/01_load.txt` línea 2 |
+| R02 | PASS | La carga hace `DROP` y `CREATE` de las tres tablas e inserta 8, 7 y 16 filas. | `evidence/psql-v2/01_load.txt`; conteos en `evidence/psql-v2/02_import_check.txt` |
+| R03 | PASS | Las tres sentencias `LIMIT 5` del enunciado se ejecutan y devuelven filas. Van sin `ORDER BY`, como están escritas en el enunciado. | `scripts/v2/verify_import.sql` líneas 17-21; `evidence/psql-v2/02_import_check.txt` líneas 37-66 |
+| R04 | BLOCKED_HITL | El enunciado pide entrar en Supabase y usar un proyecto. No hay sesión en esta corrida. Los pasos para repetirlo están al final de este archivo. | `README.md` líneas 60-77 |
+| R05 | PASS | diagram.4geeks.com abrió sin formulario de acceso. Se cargó `diagram.4geeks.json` en el lienzo del sitio (`loadERD`) y el PNG salió de su función `exportAsImage`, el control Export as PNG. El modo `readOnly=true` es un parámetro del propio sitio. No hubo cuenta. | `evidence/diagram/export_log.txt`; `evidence/diagram/tool_screen.png`; `scripts/export_diagram.cjs` |
+| R06 | PASS | `diagram.png` está en la raíz. Mide 870×770 y pesa 58484 bytes. SHA-256 `d9714a066f3c8fedb202484dcaaf3c4e100da45d8213e1b36eab7dd71c7a1901`. Es el archivo que escribió el exportador del sitio. | `diagram.png`; `evidence/diagram/export_log.txt` línea `png_bytes=58484` |
+| R07 | PASS | La imagen muestra `students`, `courses` y `enrollments`, la primaria `id` y las foráneas `student_id` y `course_id`. Cada `references` del JSON se dibuja como uno-a-muchos hacia `enrollments`. Eso es 1:n en las dos claves. `students` y `courses` quedan en n:m a través de `enrollments`; el sitio no añade una tercera línea para ese caso, y su propia ayuda pide un pivote. No hay 1:1 en el esquema y no se dibujó una. El DBML repite esas cardinalidades por escrito y no es el diagrama que se evalúa. | `diagram.png`; `diagram.4geeks.json`; `analysis_report.md` líneas 38-50; `diagram.dbml` |
+| R08 | PASS | Las foráneas visibles son `student_id` y `course_id`, no un nombre distinto del asset. El asset las declara así. | `diagram.png`; `edutrack_v2.sql` líneas 42-43 |
+| R09 | PASS | Q1–Q10 están en `queries.sql`, en ese orden. El script falla si falta alguna o si el orden cambia. | `queries.sql` líneas 10, 20, 32, 41, 52, 64, 74, 84, 94 y 105; comprobación en `scripts/recreate_and_run_v2.sh` líneas 48-54 |
+| R10 | PASS | Cada bloque Q1–Q10 contiene un `JOIN`. INNER en Q1–Q3, Q6 y Q7. LEFT en Q4, Q5, Q8, Q9 y Q10. | `queries.sql`; el chequeo estático recorre cada bloque |
+| R11 | PASS | No hay `WITH`, `EXISTS`, `LATERAL` ni `(SELECT`. El script lo rechaza. | `scripts/recreate_and_run_v2.sh` líneas 41-46; `queries.sql` |
+| R12 | PASS | Q1 devuelve 16 filas: nombre, título y porcentaje. | `queries.sql` líneas 12-18; `evidence/psql-v2/03_queries.txt` líneas 19-36; `analysis_report.md` líneas 52-75 |
+| R13 | PASS | Q2 devuelve 6 filas con nombre, email y título. Klaus Weber y Marco Rossi salen dos veces porque aprobaron dos cursos. | `queries.sql` líneas 23-30; `evidence/psql-v2/03_queries.txt` líneas 49-57; `analysis_report.md` líneas 77-90 |
+| R14 | PASS | Q3 ordena el promedio de mayor a menor. Marta López 66.1428571428571429, luego Carlos Vega, Lucia Prades y Pending assignment en 0.00000000000000000000. | `queries.sql` líneas 34-39; `evidence/psql-v2/03_queries.txt` líneas 67-73; `analysis_report.md` líneas 92-103 |
+| R15 | PASS | Q4 devuelve solo a Giulia Romano (id 8, alta 2024-05-07). | `queries.sql` líneas 44-50; `evidence/psql-v2/03_queries.txt` líneas 85-88; `analysis_report.md` líneas 105-113 |
+| R16 | PASS | Q5 devuelve solo Email Campaigns (id 7, 19.99). | `queries.sql` líneas 55-62; `evidence/psql-v2/03_queries.txt` líneas 101-104; `analysis_report.md` líneas 115-123 |
+| R17 | PASS | Q6 agrupa por estudiante y filtra con `HAVING COUNT(e.course_id) > 1`. Salen 7 estudiantes. Emily Watson y Lucia Fernandes tienen 3. | `queries.sql` líneas 66-72; `evidence/psql-v2/03_queries.txt` líneas 115-125; `analysis_report.md` líneas 125-139 |
+| R18 | PASS | Q7 suma `courses.monthly_fee`. No aparece `monthly_fee_paid` en ese bloque. Programming 409.93, Data 179.97, Design 169.96, Marketing 59.98. | `queries.sql` líneas 74-82; `evidence/psql-v2/03_queries.txt` líneas 127-142; `analysis_report.md` líneas 141-154 |
+| R19 | PASS | Q8 cuenta `COUNT(DISTINCT e.student_id)` por instructor. Marta López 6, Carlos Vega 3, Lucia Prades 2, Pending assignment 2. | `queries.sql` líneas 87-92; `evidence/psql-v2/03_queries.txt` líneas 152-158; `analysis_report.md` líneas 156-167 |
+| R20 | PASS | Q9 es un LEFT JOIN de `enrollments` a `students` con `s.id IS NULL`. Resultado: 0 filas. | `queries.sql` líneas 97-103; `evidence/psql-v2/03_queries.txt` líneas 170-172; `analysis_report.md` líneas 169-176 |
+| R21 | PASS | Q10 es el mismo patrón contra `courses`. Resultado: 0 filas. | `queries.sql` líneas 108-114; `evidence/psql-v2/03_queries.txt` líneas 183-186; `analysis_report.md` líneas 178-185 |
+| R22 | PASS | Q1 no incluye a Giulia Romano ni a Email Campaigns. Q2 no incluye a quien no tiene un aprobado (Lucia Fernandes, Pierre Dubois, Yuki Nakamura, Giulia Romano). El script de la corrida corta si Q1 o Q2 los trajeran. | `scripts/recreate_and_run_v2.sh` líneas 190-195; salida de Q1 y Q2 en `evidence/psql-v2/03_queries.txt` |
+| R23 | PASS | Q4 se queda con el estudiante sin inscripción. Q5 se queda con el curso sin inscripción. Las dos usan `LEFT JOIN` y `IS NULL`. | `queries.sql` líneas 46-49 y 57-61; resultados en Q4 y Q5 de la salida |
+| R24 | PASS | `./scripts/recreate_and_run_v2.sh` terminó en 0. `ON_ERROR_STOP` está activo. El sello dice `assert=pass`. Esto no convierte R25 en PASS. | `evidence/psql-v2/03_queries.txt`; `evidence/psql-v2/05_assert.txt`; `evidence/psql-v2/06_run_stamp.txt` |
+| R25 | BLOCKED_HITL | El enunciado pide ejecutar las consultas en Supabase. Esta corrida no abrió el SQL Editor. PostgreSQL 16 local sostiene R24 y no convierte R25 en PASS. | `analysis_report.md` líneas 187-191; `README.md` líneas 60-77 |
+| R26 | PASS | El informe tiene una sección por consulta, con la tabla completa del resultado y la cifra que devolvió `psql`, decimales incluidos. La hora del sello coincide con la del informe. | `analysis_report.md` líneas 5 y 52-185; contraste automático en `scripts/recreate_and_run_v2.sh` líneas 201-218 |
+| R27 | PASS | El único agregado con umbral es Q6. `HAVING COUNT(e.course_id) > 1` deja fuera a quien no llega a dos cursos. En esta carga son los 7 estudiantes con inscripción; Giulia Romano, con cero, no entra por el INNER JOIN. | `queries.sql` línea 71; `analysis_report.md` línea 139 |
+| R28 | HITL_MIGUEL | declaración de autoría/uso de herramientas al entregar: decisión de Miguel. | `RUBRIC.md` |
+| R29 | PASS | Los tres archivos están en la raíz. El repositorio `Picazo333/edutrack-data-audit-sql` ya es público. No se cambió la visibilidad. | `queries.sql`, `analysis_report.md`, `diagram.png`; `gh repo view` (`isPrivate: false`) |
+| R30 | HITL_ENVIO_MIGUEL | El envío al instructor queda fuera de esta corrida. | `FINAL_AUDIT.md` |
 
-## B. Supabase
+## Pasos de Supabase para Miguel (R04 y R25)
 
-| ID | Estado | Cómo se cumple | Evidencia |
-| --- | --- | --- | --- |
-| R30 | BLOCKED_HITL | El enunciado pide importar `edutrack.sql` en un proyecto Supabase y ejecutar las consultas en el SQL Editor. En esta corrida no hay cuenta ni credenciales, y no se crea una cuenta. El SQL ya está escrito para pegarlo allí. Los pasos, en el mismo orden, están en el README: (1) abrir el proyecto y el SQL Editor, (2) pegar y ejecutar `edutrack.sql`, (3) `SELECT * FROM enrollments LIMIT 5`, (4) pegar y ejecutar `queries.sql` una sola vez, (5) contrastar cada bloque con la sección del mismo número en `analysis_report.md`, (6) para repetir, volver a lanzar `edutrack.sql` y después `queries.sql`, (7) no escribir en `students` ni en `courses`. | Motivo de bloqueo: ausencia de cuenta. Pasos: `README.md:49`–`README.md:61`. La prueba sustituta de que el SQL corre es R21, en PostgreSQL 16.15, y no convierte R30 en PASS. |
+Hace falta un proyecto que ya exista. El de la auditoría plana sirve. No crear una cuenta desde este trabajo.
 
-## C. Entrega
+1. Abrir el proyecto en [supabase.com](https://supabase.com) y entrar en **SQL Editor**.
+2. Pegar el contenido completo de `edutrack_v2.sql` y ejecutarlo. El archivo borra las tres tablas y las vuelve a crear.
+3. En una consulta nueva, ejecutar y comprobar que cada sentencia devuelve filas:
 
-| ID | Estado | Cómo se cumple | Evidencia |
-| --- | --- | --- | --- |
-| R27 | PASS | El trabajo está en `cursor/edutrack-data-audit-f76c` y el pull request contra `main` es el número 1. No se hizo merge. | https://github.com/Picazo333/edutrack-data-audit-sql/pull/1. Commit `e446d9883294325009f58099e34a37c738a8322c`. |
-| R28 | PASS | El README dice qué es el proyecto, la estructura, cómo lanzar el script, las decisiones de las consultas y los pasos de Supabase. No añade colaboradores ni una autoría inventada. | `README.md:1`–`README.md:61`. |
-| R29 | PASS | No se envió el repositorio al LMS ni a ninguna plataforma de entrega del curso. El enlace de la vista del curso queda para Miguel. | Esta corrida no llama a ningún endpoint del LMS. Los criterios que siguen abiertos están en `FINAL_AUDIT.md`: R30 y R31. |
+```sql
+SELECT * FROM enrollments LIMIT 5;
+SELECT * FROM students LIMIT 5;
+SELECT * FROM courses LIMIT 5;
+```
 
-## D. Extras
+4. Pegar `queries.sql` y ejecutarlo de arriba abajo.
+5. Contrastar cada bloque con la sección del mismo número en `analysis_report.md`. Los promedios tienen que coincidir, incluido `66.1428571428571429`.
+6. `queries.sql` solo lee. Se puede repetir. Para volver al estado de la carga, ejecutar otra vez `edutrack_v2.sql`.
 
-| ID | Estado | Cómo se cumple | Evidencia |
-| --- | --- | --- | --- |
-| E01 | PASS | El informe tiene una tabla de hallazgos en cada Q y una sección de antes y después de Q6–Q8: conteos, ingresos, promedios, el curso por encima de 3 inscripciones, y la repetición de los filtros de Q1, Q2, Q4 y Q5. | `analysis_report.md:194`–`analysis_report.md:255`. Fotos: `evidence/psql/03_snapshot_before.txt`, `03b_filters_before.txt`, `05_snapshot_after.txt`, `05b_filters_after.txt`. |
-| E02 | PASS | `queries.sql` va numerado, con comentario por consulta y un `SELECT` de verificación antes del `UPDATE` y del `DELETE`. `scripts/recreate_and_run.sh` borra la base, la recrea, carga el dump oficial, corre todo y lanza `scripts/assert_after.sql`. | `queries.sql:130` y `queries.sql:153`. `scripts/recreate_and_run.sh`. `scripts/assert_after.sql`. `evidence/psql/06_assert.txt` y `07_run_stamp.txt:10`. |
+## Cómo repetir el diagrama en diagram.4geeks.com
 
-## E. SIGNAL
+La imagen del repositorio ya salió de ese sitio. Para rehacerla en una sesión propia:
 
-| ID | Estado | Cómo se cumple | Evidencia |
-| --- | --- | --- | --- |
-| S01 | PASS | El informe tiene un título, un párrafo de alcance, el orden de lectura, un resumen con las cifras que cambian la decisión, doce secciones con el mismo patrón (`Resultado` y tabla) y el antes/después separado al final. | `analysis_report.md:1`, `:9`, `:13` y las secciones Q1–Q12. `DESIGN-QA.md`. |
-| S02 | NO APLICA | No hay interfaz. El lockup 4Geeks × Divinivid no se pinta en un footer que no existe. | `DESIGN-QA.md`. |
-| S03 | PASS | `DESIGN-QA.md` registra el alcance sin UI y la revisión de jerarquía del informe. | `/opt/cursor/artifacts/DESIGN-QA.md`. |
-| S04 | NO APLICA | No hay pantallas que capturar a 390, 768 o 1280 px, ni un recorrido en vídeo, ni un build al que pasar Lighthouse. | `DESIGN-QA.md`. |
-| S05 | NO APLICA | `SIGNAL_BRIEF.md` y `SIGNAL_PACKAGE.zip` no están en esta corrida. No se inventan hashes. | `DESIGN-QA.md`. |
+1. Abrir [diagram.4geeks.com](https://diagram.4geeks.com). No pide cuenta para el lienzo ni para Export as PNG.
+2. **Load from JSON** y elegir `diagram.4geeks.json`.
+3. Comprobar las tres tablas, `id` como primaria, y `student_id` / `course_id` apuntando a `students.id` y `courses.id`.
+4. **Export as PNG** y, si se quiere sustituir la imagen de esta corrida, guardar el archivo como `diagram.png` en la raíz.
 
-## Lectura de Q4
-
-Q4 pide las cinco inscripciones no aprobadas con mayor `completion_percentage`. La consulta ordena filas de `enrollments` y aplica `LIMIT 5`. Emily Watson aparece dos veces porque tiene dos cursos sin aprobar. El informe lo dice en `analysis_report.md:75`.
+La consola del sitio registró un 404 de un recurso estático durante la carga. El PNG exportado igual muestra las tres tablas, todas las columnas y las dos relaciones.

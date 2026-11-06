@@ -1,80 +1,54 @@
-# Rúbrica — EduTrack Data Audit (edutrack-data-audit-sql)
+# Rúbrica — EduTrack, tablas relacionadas
 
-Fuente de autoridad: `OFFICIAL_README.md` / `OFFICIAL_README.es.md` (syllabus `edutrack-data-audit-sql` @ `fd2da034894ba93ba738559280ccde074ab1d953`). Asset de datos: `edutrack.sql` (sha256 `faebf83f72bbf95d7ef55aad78f36fc9168891c36e8994eeb4a65629086e3387`).
+Fuente: enunciado oficial `edutrack-data-audit-sql-related-tables` (README en inglés y en español). El enunciado manda sobre las notas de lanzamiento. Cada fila es un requisito. El estado está en `RUBRIC_JUSTIFICATION.md`.
 
-Reglas de fase 2 y del encargo: sin cuenta Supabase; PostgreSQL local; sin merge; sin envío al LMS; extras visible y técnico; SIGNAL solo en claridad y jerarquía del informe.
+El borrado en cascada se menciona en el enunciado como teoría del día y queda fuera de la rúbrica: no hay que probarlo.
 
-Estado de cada criterio se cierra en `RUBRIC_JUSTIFICATION.md` después de la evidencia. Aquí solo se fija el criterio, antes de implementar.
-
-## A. Enunciado — obligatorios
-
-| ID | Required | Criterio |
+| ID | Obligatorio | Criterio |
 | --- | --- | --- |
-| R01 | sí | `queries.sql` está en la raíz del repositorio. |
-| R02 | sí | `analysis_report.md` está en la raíz del repositorio. |
-| R03 | sí | Se importa el `edutrack.sql` oficial, sin alterar su contenido, y la carga termina sin error. |
-| R04 | sí | Tras la carga, existen `enrollments`, `students` y `courses`, y las tres contienen filas. |
-| R05 | sí | Q1 lista las inscripciones de `'Intro to Python'` y muestra nombre, email y porcentaje de completado. |
-| R06 | sí | Q2 devuelve las inscripciones con `completion_percentage` menor que 10. |
-| R07 | sí | Q3 devuelve las inscripciones con `instructor` NULL. |
-| R08 | sí | Q4 lista las 5 inscripciones no aprobadas (`passed = false`) con mayor `completion_percentage`. |
-| R09 | sí | Q5 muestra inscripciones con `enrollment_date` en o después de `'2024-07-01'`, ordenadas por esa fecha descendente. |
-| R10 | sí | Q6 inserta la inscripción que falta, con `id = 18` y exactamente los valores del comentario de `edutrack.sql`. No se inventan filas. |
-| R11 | sí | Q7 actualiza solo las filas con `instructor` NULL y les asigna `'Pending assignment'`. |
-| R12 | sí | Q8 borra solo inscripciones de cuentas `@test.com` y ninguna otra fila de `enrollments`. |
-| R13 | sí | Antes del UPDATE (Q7) y antes del DELETE (Q8) hay un SELECT con el mismo filtro, para confirmar las filas. |
-| R14 | sí | Las consultas están escritas y se ejecutan en orden Q1 → Q12. |
-| R15 | sí | Las agregaciones Q9–Q12 se calculan después de las correcciones Q6–Q8. |
-| R16 | sí | Q9 cuenta inscripciones con `GROUP BY category`. |
-| R17 | sí | Q10 calcula el promedio de `completion_percentage` con `GROUP BY course_title`, de menor a mayor. |
-| R18 | sí | Q11 muestra solo los cursos con más de 3 inscripciones y usa `HAVING`. |
-| R19 | sí | Q12 suma `monthly_fee_paid` con `GROUP BY category`, de mayor a menor. |
-| R20 | sí | Cada consulta lleva en `queries.sql` un comentario con su número (Q1…Q12). |
-| R21 | sí | Las 12 consultas están en `queries.sql` y se ejecutan sin error. La prueba de esta corrida es PostgreSQL local, dialecto compatible con Supabase. La ejecución dentro de un proyecto Supabase es R30 y no se da por cumplida aquí. |
-| R22 | sí | Los SELECT devuelven las filas y columnas que piden las condiciones del enunciado. Los números del informe salen de esa salida, no de un cálculo manual sin ejecutar. |
-| R23 | sí | `analysis_report.md` tiene una sección por cada consulta Q1–Q12, con el resultado real rellenado (nada en blanco). |
-| R24 | sí | No se modifican `students` ni `courses` (ni datos ni estructura). |
-| R25 | sí | El archivo de carga usado es el asset oficial (mismo sha256 que `PROVENANCE.json`). |
-| R26 | sí | `queries.sql` es SQL de PostgreSQL válido en Supabase: sin metacomandos `psql` (`\dt`, `\echo`), sin sintaxis de otro motor. |
-| R31 | sí | No usar herramientas de IA para generar las consultas SQL. Escribir cada una uno mismo. Cita literal de `OFFICIAL_README.md`, línea 116: "Do not use AI tools to generate your SQL queries. Write each one yourself." |
+| R01 | sí | El asset oficial `edutrack_v2.sql` está en el repositorio y no se ha modificado. |
+| R02 | sí | Ese archivo se ejecuta entero y crea `students`, `courses` y `enrollments` con sus filas. |
+| R03 | sí | La importación se comprueba con `SELECT * FROM enrollments LIMIT 5`, `SELECT * FROM students LIMIT 5` y `SELECT * FROM courses LIMIT 5`. |
+| R04 | sí | Entrar en Supabase, usar un proyecto y lanzar el SQL en el SQL Editor. |
+| R05 | sí | Modelar `students`, `courses` y `enrollments` en diagram.4geeks.com, con claves primarias, claves foráneas y tipos de relación. |
+| R06 | sí | Exportar o capturar ese diagrama y dejarlo en la raíz como `diagram.png`. |
+| R07 | sí | `diagram.png` representa las tres tablas, sus claves y los tipos de relación del esquema real. |
+| R08 | sí | En el diagrama, las claves foráneas siguen la convención `table_name_id`. |
+| R09 | sí | `queries.sql`, en la raíz, contiene las 10 consultas. |
+| R10 | sí | Cada una de esas consultas usa al menos un JOIN. |
+| R11 | sí | Ninguna usa subconsultas. |
+| R12 | sí | INNER JOIN: cada inscripción con nombre del estudiante, título del curso y porcentaje de completado. |
+| R13 | sí | INNER JOIN: nombre, email y título del curso de quien ha aprobado al menos un curso. |
+| R14 | sí | INNER JOIN: promedio de completado por instructor, de mayor a menor. |
+| R15 | sí | LEFT JOIN: estudiantes sin ninguna inscripción. |
+| R16 | sí | LEFT JOIN: cursos sin ninguna inscripción. |
+| R17 | sí | Agregación: cuántos cursos tiene cada estudiante, solo los que tienen más de uno, con `GROUP BY` y `HAVING`. |
+| R18 | sí | Ingresos por categoría con `courses.monthly_fee`, no con el pago histórico de `enrollments`. |
+| R19 | sí | Cada instructor junto al número de estudiantes inscritos en sus cursos. |
+| R20 | sí | Inscripciones cuyo `student_id` no existe en `students`. |
+| R21 | sí | Inscripciones cuyo `course_id` no existe en `courses`. |
+| R22 | sí | Las consultas INNER JOIN solo devuelven filas con pareja en las dos tablas. |
+| R23 | sí | Las consultas LEFT JOIN muestran las filas sin pareja en el lado derecho. |
+| R24 | sí | Las 10 consultas se ejecutan sin error. La prueba de esta sesión es PostgreSQL local, el mismo dialecto. |
+| R25 | sí | Esas consultas se ejecutan sin error en Supabase. |
+| R26 | sí | `analysis_report.md`, en la raíz, tiene cada sección rellena con el resultado real de la consulta. |
+| R27 | sí | `GROUP BY` + `HAVING` filtra el agregado (más de un curso). |
+| R28 | sí | No usar herramientas de IA para generar las consultas SQL. |
+| R29 | sí | `queries.sql`, `analysis_report.md` y `diagram.png` están en la raíz de un repositorio público. |
+| R30 | sí | Compartir el repositorio con el instructor, siguiendo sus instrucciones de entrega. |
 
-## B. Entorno nombrado por el enunciado
+## Recuento
 
-| ID | Required | Criterio |
+Obligatorios: 30 (R01–R30).
+
+| Estado | N | IDs |
 | --- | --- | --- |
-| R30 | sí | Importar `edutrack.sql` en un proyecto Supabase y ejecutar las consultas en el SQL Editor de Supabase. |
+| PASS | 26 | R01, R02, R03, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R26, R27, R29 |
+| FAIL | 0 | — |
+| BLOCKED_HITL | 2 | R04, R25 |
+| HITL_MIGUEL | 1 | R28 |
+| HITL_ENVIO_MIGUEL | 1 | R30 |
 
-R30 exige explícitamente Supabase (proyecto y SQL Editor). Sin cuenta ni credenciales no se crea una cuenta. Queda **BLOCKED_HITL** hasta que Miguel lo reproduzca. Los pasos exactos se documentan en el README y en `FINAL_AUDIT.md`.
+26 + 0 + 2 + 1 + 1 = 30.
 
-## C. Entrega
-
-| ID | Required | Criterio |
-| --- | --- | --- |
-| R27 | sí | El trabajo va en una rama y se abre un pull request contra `main`. No se hace merge. |
-| R28 | sí | El README del repo es técnico y neutral: qué es el proyecto, cómo ejecutarlo, estructura y decisiones. Sin colaboradores ni autoría inventada. |
-| R29 | sí (restricción) | No se envía nada al LMS ni a plataformas externas. El envío del enlace en la vista del curso queda para Miguel. |
-
-## D. Excelencia (fase 2)
-
-No sustituyen a un obligatorio. Deben existir además de la rúbrica.
-
-| ID | Required | Criterio |
-| --- | --- | --- |
-| E01 | extra visible | `analysis_report.md` incluye tablas de hallazgos Q1–Q12 y el antes y después de las correcciones Q6–Q8. |
-| E02 | extra técnico | `queries.sql` numerado, con comentarios y SELECT de verificación antes de cada UPDATE o DELETE, más un script que recrea la base desde cero y corre la auditoría de forma reproducible, con aserciones al final. |
-
-## E. SIGNAL (sin UI)
-
-| ID | Required | Criterio |
-| --- | --- | --- |
-| S01 | sí, en el informe | Claridad y jerarquía: un título, resumen con los hallazgos que importan, una sección homogénea por consulta, tablas legibles, y el antes/después separado del resultado de cada query. |
-| S02 | no aplica | Lockup 4Geeks × Divinivid. No hay interfaz. Se documenta y no se inventa un footer. |
-| S03 | sí, artifact | `DESIGN-QA.md` mínimo que registre el alcance (sin UI) y cómo se aplicó S01. |
-| S04 | no aplica | Capturas 390/768/1280, vídeo y Lighthouse. No hay interfaz que medir. |
-| S05 | no aplica | Verificación de hashes de `SIGNAL_PACKAGE.zip`. El paquete y `SIGNAL_BRIEF.md` no están en esta corrida. No se inventan hashes. |
-
-## Fuera de la rúbrica (no se puntúa como FAIL)
-
-- La estructura interna de `students` y `courses` no se evalúa. Solo se comprueba que esta entrega no las modifica.
-
-R31 es obligatorio. Estado: **HITL_MIGUEL**. Nota: declaración de autoría/uso de herramientas al entregar: decisión de Miguel.
+R04 y R25 piden Supabase. Quedan BLOCKED_HITL. R30 es el envío y queda HITL_ENVIO_MIGUEL. R28 queda HITL_MIGUEL. Nota: declaración de autoría/uso de herramientas al entregar: decisión de Miguel.

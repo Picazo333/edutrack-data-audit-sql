@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Recrea la base desde edutrack.sql y corre la auditoría Q1–Q12.
+# Recrea la base desde edutrack.sql y corre la auditoría plana Q1–Q12.
+# Las consultas de esa auditoría están en 019/queries.sql (el archivo no cambia).
 # Uso, desde la raíz del repo o desde cualquier sitio:
 #   ./scripts/recreate_and_run.sh
 # Variable opcional: EDUTRACK_DB (por defecto: edutrack)
@@ -25,7 +26,7 @@ fi
 
 PSQL=(run_psql -v ON_ERROR_STOP=1 -P pager=off)
 
-python3 - "$ROOT/queries.sql" <<'PY'
+python3 - "$ROOT/019/queries.sql" <<'PY'
 import re
 import sys
 from pathlib import Path
@@ -107,7 +108,7 @@ COURSES_HASH_BEFORE="$(hash_of courses)"
 
 {
   echo "# queries.sql Q1–Q12"
-  "${PSQL[@]}" -d "$DB" -f "$ROOT/queries.sql"
+  "${PSQL[@]}" -d "$DB" -f "$ROOT/019/queries.sql"
 } | tee "$EVIDENCE/04_queries.txt"
 
 {
@@ -145,7 +146,7 @@ PG_VERSION="$("${PSQL[@]}" -d "$DB" -At -c 'SHOW server_version;')"
   echo "database=$DB"
   echo "postgres=$PG_VERSION"
   echo "edutrack_sha256=$ACTUAL_SHA"
-  echo "queries_sha256=$(sha256sum "$ROOT/queries.sql" | awk '{print $1}')"
+  echo "queries_sha256=$(sha256sum "$ROOT/019/queries.sql" | awk '{print $1}')"
   echo "students_before=$STUDENTS_BEFORE"
   echo "courses_before=$COURSES_BEFORE"
   echo "students_hash=$STUDENTS_HASH_AFTER"

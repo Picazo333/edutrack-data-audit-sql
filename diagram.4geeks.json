@@ -1,0 +1,140 @@
+{
+  "tables": [
+    {
+      "id": "students",
+      "name": "students",
+      "x": 40,
+      "y": 40,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "number",
+          "isPrimary": true,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "signup_date",
+          "type": "date",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        }
+      ]
+    },
+    {
+      "id": "courses",
+      "name": "courses",
+      "x": 560,
+      "y": 40,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "number",
+          "isPrimary": true,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "instructor_name",
+          "type": "string",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "monthly_fee",
+          "type": "number",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        }
+      ]
+    },
+    {
+      "id": "enrollments",
+      "name": "enrollments",
+      "x": 280,
+      "y": 420,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "number",
+          "isPrimary": true,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "student_id",
+          "type": "number",
+          "isPrimary": false,
+          "isForeignKey": true,
+          "references": "students.id"
+        },
+        {
+          "name": "course_id",
+          "type": "number",
+          "isPrimary": false,
+          "isForeignKey": true,
+          "references": "courses.id"
+        },
+        {
+          "name": "enrollment_date",
+          "type": "date",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "completion_percentage",
+          "type": "number",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "passed",
+          "type": "boolean",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        },
+        {
+          "name": "monthly_fee_paid",
+          "type": "number",
+          "isPrimary": false,
+          "isForeignKey": false,
+          "references": null
+        }
+      ]
+    }
+  ]
+}

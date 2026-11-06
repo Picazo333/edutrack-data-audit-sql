@@ -1,0 +1,19 @@
+finished_at=2026-11-06T09:32:02.504Z
+url=https://diagram.4geeks.com/?readOnly=true
+login_form=no
+export=Export as PNG (exportAsImage del propio sitio)
+png_bytes=58484
+tables=courses,enrollments,students
+readOnly=true
+stored_diagram_starts={"tables":[{"id":"students","name":"students","x":40,"y":40,"attributes":[{"name":"id","type":"number","isPrimary":true,"isForeignKey":false,"references":null},{"name":"name","type
+console:
+Loading default school diagram
+Received postMessage: JSHandle@object
+Received unknown message type: erdUpdate
+Failed to load resource: the server responded with a status of 404 ()
+Received postMessage: JSHandle@object
+Loading diagram from postMessage: JSHandle@object
+Received postMessage: JSHandle@object
+Received unknown message type: erdUpdate
+Received postMessage: JSHandle@object
+Received unknown message type: erdLoaded

@@ -1,0 +1,31 @@
+// Mismo esquema que edutrack_v2.sql.
+// Texto de apoyo para las cardinalidades. La imagen de la entrega es diagram.png.
+// students 1 — n enrollments
+// courses  1 — n enrollments
+// students n — m courses, a través de enrollments
+// No hay ninguna relación 1:1 en este esquema.
+
+Table students {
+  id integer [pk, increment]
+  name varchar(100) [not null]
+  email varchar(150) [not null, unique]
+  signup_date date [not null]
+}
+
+Table courses {
+  id integer [pk, increment]
+  title varchar(150) [not null]
+  category varchar(50) [not null]
+  instructor_name varchar(100) // admite NULL; en esta carga UI/UX vale 'Pending assignment'
+  monthly_fee decimal(6,2) [not null]
+}
+
+Table enrollments {
+  id integer [pk, increment]
+  student_id integer [not null, ref: > students.id, note: 'FK table_name_id']
+  course_id integer [not null, ref: > courses.id, note: 'FK table_name_id']
+  enrollment_date date [not null]
+  completion_percentage integer [not null, default: 0]
+  passed boolean [not null, default: false]
+  monthly_fee_paid decimal(6,2) [not null]
+}

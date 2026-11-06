@@ -1,66 +1,39 @@
-# Revisión de excelencia — EduTrack Data Audit
+# Revisión de excelencia
 
-Commit: `e446d9883294325009f58099e34a37c738a8322c`
+Los extras no cambian el enunciado ni el recuento de obligatorios.
 
-Los extras están por encima de la rúbrica. No cambian el orden Q1–Q12 ni los valores que pide el comentario de `edutrack.sql`.
+Ese recuento, el mismo en `RUBRIC.md`, `RUBRIC_JUSTIFICATION.md`, `EVAL.md`, `EVIDENCE_MANIFEST.yaml` y `FINAL_AUDIT.md`: 30 obligatorios, 26 PASS, 0 FAIL, 2 BLOCKED_HITL (R04, R25), 1 HITL_MIGUEL (R28), 1 HITL_ENVIO_MIGUEL (R30). 26 + 0 + 2 + 1 + 1 = 30.
 
-## Recuento
+Los dos pedidos en el lanzamiento están hechos. Un tercero, el workflow, también.
 
-Criterios obligatorios: **29/31 PASS**, **0 FAIL**, **1 BLOCKED_HITL** (R30), **1 HITL_MIGUEL** (R31).
+## Visible — IMPLEMENT
 
-29 + 0 + 1 + 1 = 31.
+La sección «Integridad referencial» va delante de las consultas, con el cero en una cita y en una tabla de dos filas. Q9 y Q10 repiten el detalle. `diagram.png` está embebido en el informe, no solo suelto en la raíz.
 
-R31: declaración de autoría/uso de herramientas al entregar: decisión de Miguel.
+Evidencia: `analysis_report.md` líneas 24-42. La imagen es la exportación de diagram.4geeks.com (`evidence/diagram/export_log.txt` y `evidence/diagram/tool_screen.png`).
 
-E01 y E02 siguen implementados. La corrida `2026-11-06T14:47:58+00:00` dejó `assert=pass` en `evidence/psql/07_run_stamp.txt`.
+## Técnico — IMPLEMENT
 
-## E01 — Informe con tablas y antes/después
+`scripts/v2/integrity.sql` documenta el resultado esperado tras importar el asset sin más escrituras:
 
-Decisión: **IMPLEMENT**.
+- 0 huérfanos por `student_id`
+- 0 huérfanos por `course_id`
+- 2 claves foráneas en `enrollments`
+- 0 filas donde `monthly_fee_paid` difiere de `courses.monthly_fee`
+- 0 pares repetidos `(student_id, course_id)`
+- 1 estudiante sin inscripción y 1 curso sin inscripción
 
-Qué se ve al leer `analysis_report.md`:
+`scripts/v2/assert_v2.sql` corta la corrida si el cero de huérfanos, los ingresos o los promedios no cuadran. En la corrida de referencia las dos cuentas de huérfanos salieron 0 y el sello dice `assert=pass`.
 
-- Cada consulta tiene `Resultado:` y una tabla con las filas que devolvió PostgreSQL.
-- Q9 y Q12 conservan además la lista con viñetas del ejemplo del enunciado.
-- La sección «Antes y después de las correcciones (Q6–Q8)» compara conteos, ingresos, promedios y el único curso con más de 3 inscripciones.
-- Esa sección también repite los filtros de Q1, Q2, Q4 y Q5 al final, para que se vea el efecto sin reescribir el resultado oficial de cada consulta.
+Evidencia: `evidence/psql-v2/04_integrity.txt` (I2 e I3 imprimen 0; I4 e I5 imprimen `(0 rows)`) y `evidence/psql-v2/05_assert.txt`.
 
-Cifras que solo se entienden comparando los dos momentos, y que salen de las fotos guardadas:
+## Tercero — IMPLEMENT
 
-- Programming sigue en 7 inscripciones (sale James Miller y entra Lucia Fernandes) y el ingreso de la categoría pasa de 389.93 a 409.93.
-- Design baja de 5 a 4 y de 209.95 a 169.96. En el ranking de ingreso pasa del segundo al tercer puesto.
-- El promedio de Advanced Python baja de 67.5 a 45 porque el alta llega con avance 0.
-- El promedio de Intro to Python sube de 70 a 80 porque el borrado se lleva la fila de James Miller, que está al 30.
-- El ingreso total de las cuatro categorías pasa de 839.83 a 819.84. La diferencia, −19.99, es 69.99 − 49.99 − 39.99.
+`.github/workflows/sql.yml` lanza la auditoría plana y después la normalizada, en PostgreSQL del runner. En esta sesión los dos scripts terminaron en local con código 0. La ejecución de GitHub Actions no se esperó.
 
-Evidencia: `analysis_report.md:194`. Salidas `evidence/psql/03_snapshot_before.txt`, `03b_filters_before.txt`, `04_queries.txt`, `05_snapshot_after.txt`, `05b_filters_after.txt`.
+La corrida plana se usó solo para comprobar que el cambio de ruta no la rompe. La evidencia ya commiteada de `evidence/psql/` no se sustituyó: el único archivo que difería era el sello de hora, y se restauró.
 
-## E02 — Recorrido reproducible
+## Rechazado
 
-Decisión: **IMPLEMENT**.
-
-`queries.sql` numera Q1–Q12, comenta cada bloque y pone un `SELECT` con el mismo filtro antes del `UPDATE` y antes del `DELETE`. El `DELETE` devuelve también avance y cuota, así el informe no tiene que ir a buscar esas cifras a otro sitio.
-
-`scripts/recreate_and_run.sh`:
-
-1. Rechaza metacomandos de `psql` dentro de `queries.sql`, un desorden Q1–Q12, o una escritura en `students` o `courses`.
-2. Comprueba el SHA-256 oficial de `edutrack.sql`.
-3. Borra y crea la base, carga el dump y guarda la salida.
-4. Fotografía agregados y filtros antes y después.
-5. Ejecuta `queries.sql` una vez.
-6. Corre `scripts/assert_after.sql`, que falla con `EXCEPTION` si la fila 18 no coincide con el comentario, si queda un instructor `NULL`, si queda un `@test.com` en `enrollments`, o si cambian los conteos de `students` y `courses`.
-7. Compara el hash de `students` y de `courses` antes y después.
-
-La corrida comprometida en el commit termina con `assert=pass` en `evidence/psql/07_run_stamp.txt`.
-
-## Tercera idea, no implementada
-
-Una restricción `CHECK` para impedir nuevas inscripciones `@test.com`, o una vista de reporte por categoría.
-
-Decisión: **DEFER**.
-
-El enunciado pide un `DELETE` de las inscripciones de prueba que ya están, y pide no modificar `students` ni `courses`. Añadir una restricción cambia la definición de `enrollments` más allá de esa corrección. La siguiente fase del esquema, si la hay, partiría de una tabla distinta a la del enunciado. El script y el informe ya dejan medido el efecto del borrado.
-
-## Revisión después de implementar
-
-Se volvió a lanzar `./scripts/recreate_and_run.sh` después de ampliar las columnas del `SELECT` y del `DELETE` de Q8. Las aserciones pasaron. Las tablas del informe coinciden con `evidence/psql/04_queries.txt` de esa corrida (`2026-11-06T09:12:56+00:00`).
+- Un doble de Supabase marcado como PASS. El enunciado pide el editor real. R04 y R25 siguen BLOCKED.
+- Un PNG de Mermaid o de Graphviz presentado como diagram.4geeks.com. No hizo falta: el sitio exportó sin cuenta. `diagram.dbml` se queda como texto de apoyo y no puntúa R05 ni R06.
