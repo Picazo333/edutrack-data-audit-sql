@@ -6,7 +6,8 @@ Estado: **BLOCKED_INTEGRIDAD_MIGUEL**
 | --- | --- |
 | Repositorio | https://github.com/Picazo333/edutrack-data-audit-sql |
 | Rama | `cursor/edutrack-data-audit-f76c` |
-| Commit | `e446d9883294325009f58099e34a37c738a8322c` |
+| Commit de `queries.sql` y `analysis_report.md` | `e446d9883294325009f58099e34a37c738a8322c` (blobs sin cambios) |
+| Corrección de rúbrica | Documentos de esta rama. No altera esos dos archivos. |
 | Pull request | https://github.com/Picazo333/edutrack-data-audit-sql/pull/1 |
 | Base | `main` |
 | Merge | No realizado |
