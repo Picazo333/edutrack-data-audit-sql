@@ -1,0 +1,23 @@
+name: sql
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PostgreSQL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql
+          sudo service postgresql start
+          # psql/createdb/dropdb corren como el usuario del runner: el rol postgres
+          # no puede leer los .sql bajo /home/runner (Permission denied en el run 42238153693).
+          sudo -u postgres createuser --superuser "$(whoami)"
+      - name: Auditoría plana
+        run: ./scripts/recreate_and_run.sh
+      - name: Auditoría normalizada
+        run: ./scripts/recreate_and_run_v2.sh

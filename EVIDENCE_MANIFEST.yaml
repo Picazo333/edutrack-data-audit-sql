@@ -1,126 +1,90 @@
-run:
-  commit_sha: e446d9883294325009f58099e34a37c738a8322c
-  branch: cursor/edutrack-data-audit-f76c
-  base: main
-  pull_request: https://github.com/Picazo333/edutrack-data-audit-sql/pull/1
-  merged: false
-  postgres: "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
-  evidence_run_finished_at: "2026-11-06T14:47:58+00:00"
-  edutrack_sha256: faebf83f72bbf95d7ef55aad78f36fc9168891c36e8994eeb4a65629086e3387
-  queries_sha256: 3af333ff5e4bef38e30389c17e2feb1e8a03308b3cccb10d9a699c7d6ccbe6e0
-  students_hash: 9040195f9dbefe6f0bc3b431f4f81cbd
-  courses_hash: 13ff18accb70e8ce0394e19750c4865e
-  assert: pass
-  analysis_report_sha256: e36f3f5f7d7bc58b3c2727b170729379fdc678c11445b7433a994fca52290027
-  score: "29/31 PASS, 0 FAIL, 1 BLOCKED_HITL, 1 HITL_MIGUEL"
-  pass_count: 29
-  fail_count: 0
-  blocked_hitl: [R30]
-  hitl_miguel: [R31]
-  r31_note: "declaración de autoría/uso de herramientas al entregar: decisión de Miguel"
-  required_total: 31
+# Evidencias de la auditoría normalizada de EduTrack.
+# El SHA del commit se cita en el cuerpo del pull request (git rev-parse HEAD
+# de la rama feature/edutrack-data-audit-sql-related-tables). No se reescribe
+# este archivo después del commit solo para incrustar ese SHA: al hacerlo
+# el commit dejaría de ser el mismo.
+branch: feature/edutrack-data-audit-sql-related-tables
+base: cursor/edutrack-data-audit-f76c
+run_finished_at: "2026-11-06T14:52:20+00:00"
+merged_019_head: fcb2dd3456f69cb498c6922ce0af590c1730c2af
+counts:
+  required: 30
+  pass: 26
+  fail: 0
+  blocked_hitl: 2
+  hitl_miguel: 1
+  hitl_envio_miguel: 1
+  sum: 30
+  check: "26 + 0 + 2 + 1 + 1 = 30"
+  pass_label: PASS
+  fail_label: FAIL
+  blocked_hitl_label: BLOCKED_HITL
+  hitl_miguel_label: HITL_MIGUEL
+  hitl_envio_miguel_label: HITL_ENVIO_MIGUEL
+postgres: "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
 
-items:
-  - id: EV-LOAD
-    path: evidence/psql/01_load.txt
-    artifact_copy: /opt/cursor/artifacts/psql/01_load.txt
-    rubric: [R03, R25]
-    note: Carga de edutrack.sql y sha256 oficial.
+files:
+  - path: edutrack_v2.sql
+    sha256: 091f6fa2948d0847cfe06937b2d24572a0afa292fbd19412764c220d39e17cb0
+    rubric: [R01, R02]
+  - path: queries.sql
+    sha256: 797bde8f286efcfb27daafae9a6bc9a6d8ed6ab453aa962c66a9f609952b0108
+    rubric: [R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R27]
+  - path: analysis_report.md
+    sha256: 41be7c895355fc432e19aeced3e471e522563d51b18910d52a998dc5a39196c2
+    rubric: [R07, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R26]
+  - path: diagram.png
+    sha256: d9714a066f3c8fedb202484dcaaf3c4e100da45d8213e1b36eab7dd71c7a1901
+    bytes: 58484
+    width: 870
+    height: 770
+    rubric: [R05, R06, R07, R08]
+    note: "Export as PNG de diagram.4geeks.com. No es un render Mermaid ni Graphviz."
+  - path: diagram.4geeks.json
+    rubric: [R05, R07, R08]
+  - path: diagram.dbml
+    rubric: []
+    note: "Texto de apoyo. No puntúa el criterio de la herramienta."
+  - path: evidence/psql-v2/01_load.txt
+    rubric: [R01, R02]
+  - path: evidence/psql-v2/02_import_check.txt
+    rubric: [R02, R03]
+  - path: evidence/psql-v2/03_queries.txt
+    sha256: abc1805ab7d86380658a124a3c90a1e744641a40136af0575fe143efd9765879
+    rubric: [R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R26]
+  - path: evidence/psql-v2/04_integrity.txt
+    sha256: 29edfae17bf07bd400b2cbb33f153ae6f6a74ec1dd9de7b9aa09de4ffefdba4e
+    rubric: [R20, R21]
+    note: "Suite técnica. Huérfanos esperados y observados: 0."
+  - path: evidence/psql-v2/05_assert.txt
+    sha256: aa0db0b9b3488d8d4b6050a611399323f9ebd06867fc2ab7b44e592f03be3f74
+    rubric: [R24]
+  - path: evidence/psql-v2/06_run_stamp.txt
+    sha256: 0b4ae0e4e744c73b8ad6d27472a7b8933f94dfd60d075e6c0e2de551beec695d
+    rubric: [R01, R24, R26]
+  - path: evidence/diagram/export_log.txt
+    sha256: 6e851db68f4a9bd6b4c4f0eb38fa9b071d54fc6321605b69e8282191bc0c356e
+    rubric: [R05, R06]
+  - path: evidence/diagram/tool_screen.png
+    sha256: 4ecd33f7df1ab5068184803f949bc961e737627dabc50cd2bd9bb3a3845c2aa5
+    rubric: [R05]
+  - path: 019/queries.sql
+    sha256: 3af333ff5e4bef38e30389c17e2feb1e8a03308b3cccb10d9a699c7d6ccbe6e0
+    note: "Texto de la auditoría plana, sin cambios. Movido desde la raíz."
+  - path: 019/analysis_report.md
+    sha256: e36f3f5f7d7bc58b3c2727b170729379fdc678c11445b7433a994fca52290027
+    note: "Informe de la auditoría plana, sin cambios. Movido desde la raíz."
 
-  - id: EV-IMPORT
-    path: evidence/psql/02_import_check.txt
-    artifact_copy: /opt/cursor/artifacts/psql/02_import_check.txt
-    rubric: [R04]
-    note: Las tres tablas existen. Conteos 7, 17 y 10. LIMIT 5 devuelve filas.
+blocked_hitl:
+  - id: R04
+    reason: "Supabase exige un proyecto y el SQL Editor. Esta corrida no los abrió."
+  - id: R25
+    reason: "Las 10 consultas no se ejecutaron en el SQL Editor de Supabase."
 
-  - id: EV-BEFORE
-    path: evidence/psql/03_snapshot_before.txt
-    artifact_copy: /opt/cursor/artifacts/psql/03_snapshot_before.txt
-    rubric: [R15, E01]
-    note: Agregados antes de Q6–Q8. Design 5, Programming ingreso 389.93.
-
-  - id: EV-FILTERS-BEFORE
-    path: evidence/psql/03b_filters_before.txt
-    artifact_copy: /opt/cursor/artifacts/psql/03b_filters_before.txt
-    rubric: [R05, R06, R08, R09, E01]
-    note: Filtros de Q1, Q2, Q4 y Q5 sobre la carga. 5, 4, 5 y 9 filas.
-
-  - id: EV-QUERIES
-    path: evidence/psql/04_queries.txt
-    artifact_copy: /opt/cursor/artifacts/psql/04_queries.txt
-    rubric: [R05, R06, R07, R08, R09, R10, R11, R12, R13, R16, R17, R18, R19, R21, R22, R23, E01]
-    note: Salida íntegra de queries.sql. INSERT 0 1 en la línea 57, UPDATE 2 en la 70, DELETE 2 en la 83.
-
-  - id: EV-AFTER
-    path: evidence/psql/05_snapshot_after.txt
-    artifact_copy: /opt/cursor/artifacts/psql/05_snapshot_after.txt
-    rubric: [R15, R16, R17, R18, R19, E01]
-    note: 16 inscripciones, 0 NULL, 0 @test.com, id 18 presente, agregados ya corregidos.
-
-  - id: EV-FILTERS-AFTER
-    path: evidence/psql/05b_filters_after.txt
-    artifact_copy: /opt/cursor/artifacts/psql/05b_filters_after.txt
-    rubric: [E01]
-    note: Los mismos filtros al final. 4, 5, 5 y 10 filas.
-
-  - id: EV-ASSERT
-    path: evidence/psql/06_assert.txt
-    artifact_copy: /opt/cursor/artifacts/psql/06_assert.txt
-    rubric: [R10, R11, R12, R24, E02]
-    note: El bloque DO termina sin EXCEPTION.
-
-  - id: EV-STAMP
-    path: evidence/psql/07_run_stamp.txt
-    artifact_copy: /opt/cursor/artifacts/psql/07_run_stamp.txt
-    rubric: [R21, R24, R25, E02]
-    note: assert=pass, hashes de students y courses, versión de PostgreSQL.
-
-  - id: EV-QUERIES-SQL
-    path: queries.sql
-    rubric: [R01, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R26, E02]
-    lines: "1-207"
-
-  - id: EV-REPORT
-    path: analysis_report.md
-    rubric: [R02, R22, R23, S01, E01]
-    lines: "1-261"
-
-  - id: EV-SQL-ASSET
-    path: edutrack.sql
-    rubric: [R03, R10, R25]
-    lines: "109-127"
-    note: Comentario MISSING RECORD. Archivo byte a byte del asset oficial.
-
-  - id: EV-RUNNER
-    path: scripts/recreate_and_run.sh
-    rubric: [R03, R13, R14, R24, R25, R26, E02]
-
-  - id: EV-ASSERT-SQL
-    path: scripts/assert_after.sql
-    rubric: [R10, R11, R12, R24, E02]
-
-  - id: EV-README
-    path: README.md
-    rubric: [R28, R30]
-    lines: "49-61"
-    note: Pasos de Supabase. R30 sigue BLOCKED_HITL porque esos pasos no se ejecutaron allí.
-
-  - id: EV-PR
-    path: https://github.com/Picazo333/edutrack-data-audit-sql/pull/1
-    rubric: [R27]
-    note: PR abierto contra main. Sin merge.
-
-  - id: EV-R31
-    path: EVAL.md
-    rubric: [R31]
-    result: HITL_MIGUEL
+hitl_miguel:
+  - id: R28
     note: "declaración de autoría/uso de herramientas al entregar: decisión de Miguel"
 
-  - id: EV-RERUN
-    path: evidence/psql/07_run_stamp.txt
-    rubric: [R21, R05, R06, R07, R08, R09, R10, R11, R12, R16, R17, R18, R19]
-    result: PASS
-    note: "Corrida 2026-11-06T14:47:58+00:00. assert=pass. Q1–Q12 sobre una base recreada."
-
-screenshots: []
-screenshots_reason: "Sin interfaz. S04 no aplica. No se generaron PNG."
+hitl_envio_miguel:
+  - id: R30
+    note: "El envío al instructor queda fuera de esta corrida."

@@ -1,43 +1,43 @@
-# EVAL — EduTrack Data Audit
+# EVAL — EduTrack, tablas relacionadas
 
-Pasada: `2026-11-06T14:47:58+00:00`. Motor: PostgreSQL 16.15. Comando: `./scripts/recreate_and_run.sh`. Resultado: `assert=pass` en `evidence/psql/07_run_stamp.txt`.
+Pasada: `2026-11-06T14:52:20+00:00`. Motor: PostgreSQL 16.15. Comando: `./scripts/recreate_and_run_v2.sh`. Resultado: `assert=pass` en `evidence/psql-v2/06_run_stamp.txt`.
 
-La base se recreó desde `edutrack.sql` (sha256 `faebf83f72bbf95d7ef55aad78f36fc9168891c36e8994eeb4a65629086e3387`). `queries.sql` (sha256 `3af333ff5e4bef38e30389c17e2feb1e8a03308b3cccb10d9a699c7d6ccbe6e0`) se ejecutó una vez, en orden Q1–Q12. La salida completa está en `evidence/psql/04_queries.txt`.
+La base `edutrack_v2` se recreó desde `edutrack_v2.sql` (sha256 `091f6fa2948d0847cfe06937b2d24572a0afa292fbd19412764c220d39e17cb0`). `queries.sql` (sha256 `797bde8f286efcfb27daafae9a6bc9a6d8ed6ab453aa962c66a9f609952b0108`) se ejecutó una vez, Q1–Q10. La salida está en `evidence/psql-v2/03_queries.txt`. Las aserciones cerraron a la primera en esta pasada.
 
 ## Consultas
 
 | ID | Qué devolvió esta corrida | Estado |
 | --- | --- | --- |
-| Q1 | 5 filas de Intro to Python (nombre, email, avance) | PASS |
-| Q2 | 4 filas con avance menor que 10 | PASS |
-| Q3 | 2 filas con instructor NULL | PASS |
-| Q4 | 5 filas con `passed = false`, mayor avance primero | PASS |
-| Q5 | 9 filas desde 2024-07-01, fecha descendente | PASS |
-| Q6 | `INSERT 0 1`, id 18, valores del comentario de la carga | PASS |
-| Q7 | `UPDATE 2`, solo NULL → `Pending assignment` | PASS |
-| Q8 | `DELETE 2`, solo `@test.com` | PASS |
-| Q9 | Programming 7, Design 4, Data 3, Marketing 2 | PASS |
-| Q10 | 6 promedios, de UI/UX en 0 a Intro to Python en 80 | PASS |
-| Q11 | `HAVING`: solo Intro to Python, 4 inscripciones | PASS |
-| Q12 | Programming 409.93, Data 179.97, Design 169.96, Marketing 59.98 | PASS |
+| Q1 | 16 filas: nombre, título y porcentaje. Sin Giulia Romano y sin Email Campaigns | PASS |
+| Q2 | 6 filas aprobadas, con nombre, email y título | PASS |
+| Q3 | 4 promedios, de Marta López (66.1428571428571429) a Pending assignment (0) | PASS |
+| Q4 | 1 fila: Giulia Romano, sin inscripción | PASS |
+| Q5 | 1 fila: Email Campaigns, sin inscripción | PASS |
+| Q6 | 7 estudiantes con más de un curso (`GROUP BY` + `HAVING`) | PASS |
+| Q7 | Programming 409.93, Data 179.97, Design 169.96, Marketing 59.98, con `courses.monthly_fee` | PASS |
+| Q8 | Marta López 6, Carlos Vega 3, Lucia Prades 2, Pending assignment 2 | PASS |
+| Q9 | 0 filas huérfanas por `student_id` | PASS |
+| Q10 | 0 filas huérfanas por `course_id` | PASS |
 
-`students` y `courses` conservan el hash de antes de las correcciones. No hubo reparación en esta pasada: las aserciones cerraron a la primera.
+La suite `scripts/v2/integrity.sql` repite el cero de huérfanos. I2 e I3 imprimen 0. `evidence/psql-v2/05_assert.txt` dice `assert=pass`.
 
 ## Recuento
 
-Obligatorios R01–R29, R30 y R31: 31.
+Obligatorios R01–R30: 30.
 
 | Estado | N | IDs |
 | --- | --- | --- |
-| PASS | 30 | R01–R30 |
+| PASS | 28 | R01, R02, R03, R04, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R25, R26, R27, R29 |
 | FAIL | 0 | — |
 | BLOCKED_HITL | 0 | — |
-| HITL_MIGUEL | 1 | R31 |
+| HITL_MIGUEL | 1 | R28 |
+| HITL_ENVIO_MIGUEL | 1 | R30 |
 
-30 + 0 + 0 + 1 = 31.
+28 + 0 + 0 + 1 + 1 = 30.
 
-R30 está **PASS**. Evidencia en `evidence/supabase-live/`: migración aplicada y lecturas Q1–Q12 en el proyecto Supabase 4geeks-cohorte, 12 nov 2026. El README de esa carpeta fecha la ejecución el 2026-11-06 11:58 CST.
+R04 y R25 están **PASS**. Evidencia en `evidence/supabase-live/`: migración aplicada y lecturas Q1–Q10 en el proyecto Supabase 4geeks-cohorte, 12 nov 2026. El README de esa carpeta fecha la ejecución el 2026-11-06 11:58 CST.
 
 ## Pendientes
 
-- R31, HITL_MIGUEL. Declaración de autoría/uso de herramientas al entregar: decisión de Miguel.
+- R28, HITL_MIGUEL. declaración de autoría/uso de herramientas al entregar: decisión de Miguel.
+- R30, HITL_ENVIO_MIGUEL. El envío al instructor no se hace en esta corrida.

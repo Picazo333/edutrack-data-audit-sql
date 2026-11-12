@@ -1,0 +1,236 @@
+{
+ "tables": [
+  {
+   "table_name": "courses"
+  },
+  {
+   "table_name": "enrollments"
+  },
+  {
+   "table_name": "students"
+  }
+ ],
+ "counts": [
+  "courses",
+  "enrollments",
+  "students"
+ ],
+ "server_version": "17.11",
+ "Q1": [
+  {
+   "student_name": "Emily Watson",
+   "course_title": "Advanced Python",
+   "completion_percentage": 40
+  },
+  {
+   "student_name": "Emily Watson",
+   "course_title": "Intro to Python",
+   "completion_percentage": 85
+  },
+  {
+   "student_name": "Emily Watson",
+   "course_title": "Web Design Basics",
+   "completion_percentage": 60
+  },
+  {
+   "student_name": "Klaus Weber",
+   "course_title": "Data Analysis with SQL",
+   "completion_percentage": 78
+  },
+  {
+   "student_name": "Klaus Weber",
+   "course_title": "Intro to Python",
+   "completion_percentage": 92
+  },
+  {
+   "student_name": "Lucia Fernandes",
+   "course_title": "Advanced Python",
+   "completion_percentage": 0
+  },
+  {
+   "student_name": "Lucia Fernandes",
+   "course_title": "Digital Marketing 101",
+   "completion_percentage": 3
+  },
+  {
+   "student_name": "Lucia Fernandes",
+   "course_title": "Web Design Basics",
+   "completion_percentage": 5
+  },
+  {
+   "student_name": "Marco Rossi",
+   "course_title": "Advanced Python",
+   "completion_percentage": 95
+  },
+  {
+   "student_name": "Marco Rossi",
+   "course_title": "Intro to Python",
+   "completion_percentage": 88
+  },
+  {
+   "student_name": "Pierre Dubois",
+   "course_title": "Data Analysis with SQL",
+   "completion_percentage": 20
+  },
+  {
+   "student_name": "Pierre Dubois",
+   "course_title": "UI/UX Fundamentals",
+   "completion_percentage": 0
+  },
+  {
+   "student_name": "Priya Sharma",
+   "course_title": "Digital Marketing 101",
+   "completion_percentage": 70
+  },
+  {
+   "student_name": "Priya Sharma",
+   "course_title": "Intro to Python",
+   "completion_percentage": 55
+  },
+  {
+   "student_name": "Yuki Nakamura",
+   "course_title": "Data Analysis with SQL",
+   "completion_percentage": 45
+  },
+  {
+   "student_name": "Yuki Nakamura",
+   "course_title": "UI/UX Fundamentals",
+   "completion_percentage": 0
+  }
+ ],
+ "Q2": [
+  {
+   "student_name": "Emily Watson",
+   "student_email": "emily.watson@student.edutrack.com",
+   "course_title": "Intro to Python"
+  },
+  {
+   "student_name": "Klaus Weber",
+   "student_email": "klaus.weber@student.edutrack.com",
+   "course_title": "Data Analysis with SQL"
+  },
+  {
+   "student_name": "Klaus Weber",
+   "student_email": "klaus.weber@student.edutrack.com",
+   "course_title": "Intro to Python"
+  },
+  {
+   "student_name": "Marco Rossi",
+   "student_email": "marco.rossi@student.edutrack.com",
+   "course_title": "Advanced Python"
+  },
+  {
+   "student_name": "Marco Rossi",
+   "student_email": "marco.rossi@student.edutrack.com",
+   "course_title": "Intro to Python"
+  },
+  {
+   "student_name": "Priya Sharma",
+   "student_email": "priya.sharma@student.edutrack.com",
+   "course_title": "Digital Marketing 101"
+  }
+ ],
+ "Q3": [
+  {
+   "instructor_name": "Marta López",
+   "avg_completion_percentage": 66.14285714285714
+  },
+  {
+   "instructor_name": "Carlos Vega",
+   "avg_completion_percentage": 40
+  },
+  {
+   "instructor_name": "Lucia Prades",
+   "avg_completion_percentage": 36.5
+  },
+  {
+   "instructor_name": "Pending assignment",
+   "avg_completion_percentage": 0
+  }
+ ],
+ "Q4": [
+  {
+   "id": 8,
+   "name": "Giulia Romano",
+   "email": "giulia.romano@student.edutrack.com",
+   "signup_date": "2024-05-07"
+  }
+ ],
+ "Q5": [
+  {
+   "id": 7,
+   "title": "Email Campaigns",
+   "category": "Marketing",
+   "instructor_name": "Lucia Prades",
+   "monthly_fee": 19.99
+  }
+ ],
+ "Q6": [
+  {
+   "student_name": "Emily Watson",
+   "course_count": 3
+  },
+  {
+   "student_name": "Lucia Fernandes",
+   "course_count": 3
+  },
+  {
+   "student_name": "Klaus Weber",
+   "course_count": 2
+  },
+  {
+   "student_name": "Marco Rossi",
+   "course_count": 2
+  },
+  {
+   "student_name": "Pierre Dubois",
+   "course_count": 2
+  },
+  {
+   "student_name": "Priya Sharma",
+   "course_count": 2
+  },
+  {
+   "student_name": "Yuki Nakamura",
+   "course_count": 2
+  }
+ ],
+ "Q7": [
+  {
+   "category": "Programming",
+   "total_revenue": 409.93
+  },
+  {
+   "category": "Data",
+   "total_revenue": 179.97
+  },
+  {
+   "category": "Design",
+   "total_revenue": 169.96
+  },
+  {
+   "category": "Marketing",
+   "total_revenue": 59.98
+  }
+ ],
+ "Q8": [
+  {
+   "instructor_name": "Marta López",
+   "student_count": 6
+  },
+  {
+   "instructor_name": "Carlos Vega",
+   "student_count": 3
+  },
+  {
+   "instructor_name": "Lucia Prades",
+   "student_count": 2
+  },
+  {
+   "instructor_name": "Pending assignment",
+   "student_count": 2
+  }
+ ],
+ "Q9": [],
+ "Q10": []
+}
