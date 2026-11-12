@@ -29,14 +29,15 @@ Obligatorios R01–R29, R30 y R31: 31.
 
 | Estado | N | IDs |
 | --- | --- | --- |
-| PASS | 29 | R01–R29 |
+| PASS | 30 | R01–R30 |
 | FAIL | 0 | — |
-| BLOCKED_HITL | 1 | R30 |
+| BLOCKED_HITL | 0 | — |
 | HITL_MIGUEL | 1 | R31 |
 
-29 + 0 + 1 + 1 = 31.
+30 + 0 + 0 + 1 = 31.
+
+R30 está **PASS**. Evidencia en `evidence/supabase-live/`: migración aplicada y lecturas Q1–Q12 en el proyecto Supabase 4geeks-cohorte, 12 nov 2026. El README de esa carpeta fecha la ejecución el 2026-11-06 11:58 CST.
 
 ## Pendientes
 
-- R30, BLOCKED_HITL. El enunciado pide el proyecto y el SQL Editor de Supabase. No hay cuenta ni credenciales, y no se crea una cuenta. Los pasos están en `README.md`.
 - R31, HITL_MIGUEL. Declaración de autoría/uso de herramientas al entregar: decisión de Miguel.
