@@ -1,0 +1,62 @@
+# snapshot DESPUÉS de Q6–Q8
+ enrollments 
+-------------
+          16
+(1 row)
+
+ students 
+----------
+       10
+(1 row)
+
+ courses 
+---------
+       7
+(1 row)
+
+ null_instructor 
+-----------------
+               0
+(1 row)
+
+ test_com_enrollments 
+----------------------
+                    0
+(1 row)
+
+ id_18 
+-------
+     1
+(1 row)
+
+  category   | enrollment_count 
+-------------+------------------
+ Programming |                7
+ Design      |                4
+ Data        |                3
+ Marketing   |                2
+(4 rows)
+
+      course_title      | avg_completion_percentage 
+------------------------+---------------------------
+ UI/UX Fundamentals     |    0.00000000000000000000
+ Web Design Basics      |       32.5000000000000000
+ Digital Marketing 101  |       36.5000000000000000
+ Advanced Python        |       45.0000000000000000
+ Data Analysis with SQL |       47.6666666666666667
+ Intro to Python        |       80.0000000000000000
+(6 rows)
+
+  course_title   | enrollment_count 
+-----------------+------------------
+ Intro to Python |                4
+(1 row)
+
+  category   | total_revenue 
+-------------+---------------
+ Programming |        409.93
+ Data        |        179.97
+ Design      |        169.96
+ Marketing   |         59.98
+(4 rows)
+
