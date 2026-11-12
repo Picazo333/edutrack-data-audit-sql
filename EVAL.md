@@ -27,16 +27,17 @@ Obligatorios R01–R30: 30.
 
 | Estado | N | IDs |
 | --- | --- | --- |
-| PASS | 26 | R01, R02, R03, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R26, R27, R29 |
+| PASS | 28 | R01, R02, R03, R04, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R25, R26, R27, R29 |
 | FAIL | 0 | — |
-| BLOCKED_HITL | 2 | R04, R25 |
+| BLOCKED_HITL | 0 | — |
 | HITL_MIGUEL | 1 | R28 |
 | HITL_ENVIO_MIGUEL | 1 | R30 |
 
-26 + 0 + 2 + 1 + 1 = 30.
+28 + 0 + 0 + 1 + 1 = 30.
+
+R04 y R25 están **PASS**. Evidencia en `evidence/supabase-live/`: migración aplicada y lecturas Q1–Q10 en el proyecto Supabase 4geeks-cohorte, 12 nov 2026. El README de esa carpeta fecha la ejecución el 2026-11-06 11:58 CST.
 
 ## Pendientes
 
-- R04 y R25, BLOCKED_HITL. El enunciado pide Supabase. No hay sesión ni proyecto en esta corrida, y no se crea una cuenta. Los pasos están en `README.md`.
 - R28, HITL_MIGUEL. declaración de autoría/uso de herramientas al entregar: decisión de Miguel.
 - R30, HITL_ENVIO_MIGUEL. El envío al instructor no se hace en esta corrida.

@@ -1,6 +1,6 @@
 # Auditoría final — EduTrack Data Audit
 
-Estado: ejecución local verificada. Pendientes: R30 **BLOCKED_HITL**, R31 **HITL_MIGUEL**.
+Estado: ejecución local verificada y corrida en Supabase registrada. R30 **PASS**. Pendiente: R31 **HITL_MIGUEL**.
 
 | Dato | Valor |
 | --- | --- |
@@ -15,13 +15,13 @@ Estado: ejecución local verificada. Pendientes: R30 **BLOCKED_HITL**, R31 **HIT
 
 ## Resultado
 
-**29/31 PASS. 0 FAIL. 1 BLOCKED_HITL. 1 HITL_MIGUEL.**
+**30/31 PASS. 0 FAIL. 0 BLOCKED_HITL. 1 HITL_MIGUEL.**
 
-29 + 0 + 1 + 1 = 31.
+30 + 0 + 0 + 1 = 31.
 
 R31 está **HITL_MIGUEL**. Declaración de autoría/uso de herramientas al entregar: decisión de Miguel.
 
-R30 está **BLOCKED_HITL**. El enunciado pide un proyecto de Supabase y el SQL Editor. No hay cuenta ni credenciales, y no se creó ninguna. La misma auditoría se ejecutó en PostgreSQL 16.15 local, que es el dialecto de Supabase. Eso sostiene R21 y no convierte R30 en PASS.
+R30 está **PASS**. Evidencia en `evidence/supabase-live/`: migración aplicada y lecturas Q1–Q12 en el proyecto Supabase 4geeks-cohorte, 12 nov 2026. En la rama `cursor/edutrack-data-audit-f76c` (commit `6f09d990a4b2d10821e463c4a3e2501d1720c4f2`) la migración 019 está en `evidence/supabase-live/00-migration-applied.sql` y las lecturas en `evidence/supabase-live/01-results-Q1-Q12.json`. En esta rama el SQL de esa carpeta es la migración 020; las lecturas Q1–Q12 siguen en `evidence/supabase-live/01-results-Q1-Q12.json`. El README de la corrida 019 fecha la ejecución el 2026-11-06 11:58 CST, en Postgres 17.11 del proyecto 4geeks-cohorte (ref `atraotgdztnrqystnujh`).
 
 ### Pasos para repetirla en Supabase
 
@@ -54,4 +54,4 @@ Los mismos pasos están en `README.md`, sección «Repetir la misma corrida en S
 
 ## Cierre
 
-Q1–Q12 se volvieron a ejecutar en PostgreSQL 16.15 el `2026-11-06T14:47:58+00:00` con `assert=pass`. Quedan dos criterios con Miguel: R30 (BLOCKED_HITL) y R31 (HITL_MIGUEL). No se hace merge y no se envía nada al LMS.
+Q1–Q12 se volvieron a ejecutar en PostgreSQL 16.15 el `2026-11-06T14:47:58+00:00` con `assert=pass`. La corrida en Supabase que cierra R30 está en `evidence/supabase-live/`. Queda R31 (HITL_MIGUEL). No se hace merge y no se envía nada al LMS.

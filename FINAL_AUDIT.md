@@ -4,19 +4,19 @@ Estado: **PENDIENTE_REVISION_ORQUESTADOR**. No se hizo merge del pull request. N
 
 ## Resultado
 
-**26/30 PASS. 0 FAIL. 2 BLOCKED_HITL. 1 HITL_MIGUEL. 1 HITL_ENVIO_MIGUEL.**
+**28/30 PASS. 0 FAIL. 0 BLOCKED_HITL. 1 HITL_MIGUEL. 1 HITL_ENVIO_MIGUEL.**
 
-26 + 0 + 2 + 1 + 1 = 30.
+28 + 0 + 0 + 1 + 1 = 30.
 
 | Estado | N | IDs |
 | --- | --- | --- |
-| PASS | 26 | R01, R02, R03, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R26, R27, R29 |
+| PASS | 28 | R01, R02, R03, R04, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R25, R26, R27, R29 |
 | FAIL | 0 | — |
-| BLOCKED_HITL | 2 | R04, R25 |
+| BLOCKED_HITL | 0 | — |
 | HITL_MIGUEL | 1 | R28 |
 | HITL_ENVIO_MIGUEL | 1 | R30 |
 
-R04 y R25 están BLOCKED_HITL. Piden Supabase (proyecto y SQL Editor). Esta corrida no abrió ese editor y no creó una cuenta. La misma auditoría se ejecutó en PostgreSQL 16.15 local. Eso sostiene R24 y no convierte R04 ni R25 en PASS.
+R04 y R25 están **PASS**. Evidencia en `evidence/supabase-live/`: migración aplicada y lecturas Q1–Q10 en el proyecto Supabase 4geeks-cohorte, 12 nov 2026. La migración aplicada está en `evidence/supabase-live/00-migration-applied.sql` y las lecturas en `evidence/supabase-live/01-results-Q1-Q10.json`. El README de esa carpeta fecha la ejecución el 2026-11-06 11:58 CST, en Postgres 17.11 del proyecto 4geeks-cohorte (ref `atraotgdztnrqystnujh`).
 
 R28 está HITL_MIGUEL. declaración de autoría/uso de herramientas al entregar: decisión de Miguel.
 
