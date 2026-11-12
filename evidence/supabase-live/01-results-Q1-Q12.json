@@ -1,0 +1,434 @@
+{
+ "counts": [
+  {
+   "table_name": "courses",
+   "rows": 7
+  },
+  {
+   "table_name": "enrollments",
+   "rows": 16
+  },
+  {
+   "table_name": "students",
+   "rows": 10
+  }
+ ],
+ "students_hash": "9040195f9dbefe6f0bc3b431f4f81cbd",
+ "courses_hash": "13ff18accb70e8ce0394e19750c4865e",
+ "server_version": "17.11",
+ "tables": [
+  {
+   "table_name": "courses"
+  },
+  {
+   "table_name": "enrollments"
+  },
+  {
+   "table_name": "students"
+  }
+ ],
+ "enrollments_limit5": [
+  {
+   "id": 1,
+   "student_id": 1,
+   "student_name": "Emily Watson",
+   "student_email": "emily.watson@student.edutrack.com",
+   "course_id": 1,
+   "course_title": "Intro to Python",
+   "category": "Programming",
+   "enrollment_date": "2024-03-10",
+   "completion_percentage": 85,
+   "passed": true,
+   "monthly_fee_paid": 49.99,
+   "instructor": "Marta López"
+  },
+  {
+   "id": 2,
+   "student_id": 1,
+   "student_name": "Emily Watson",
+   "student_email": "emily.watson@student.edutrack.com",
+   "course_id": 2,
+   "course_title": "Web Design Basics",
+   "category": "Design",
+   "enrollment_date": "2024-04-15",
+   "completion_percentage": 60,
+   "passed": false,
+   "monthly_fee_paid": 39.99,
+   "instructor": "Carlos Vega"
+  },
+  {
+   "id": 3,
+   "student_id": 2,
+   "student_name": "Klaus Weber",
+   "student_email": "klaus.weber@student.edutrack.com",
+   "course_id": 1,
+   "course_title": "Intro to Python",
+   "category": "Programming",
+   "enrollment_date": "2024-03-12",
+   "completion_percentage": 92,
+   "passed": true,
+   "monthly_fee_paid": 49.99,
+   "instructor": "Marta López"
+  },
+  {
+   "id": 4,
+   "student_id": 2,
+   "student_name": "Klaus Weber",
+   "student_email": "klaus.weber@student.edutrack.com",
+   "course_id": 3,
+   "course_title": "Data Analysis with SQL",
+   "category": "Data",
+   "enrollment_date": "2024-05-01",
+   "completion_percentage": 78,
+   "passed": true,
+   "monthly_fee_paid": 59.99,
+   "instructor": "Marta López"
+  },
+  {
+   "id": 5,
+   "student_id": 3,
+   "student_name": "Lucia Fernandes",
+   "student_email": "lucia.fernandes@student.edutrack.com",
+   "course_id": 2,
+   "course_title": "Web Design Basics",
+   "category": "Design",
+   "enrollment_date": "2024-06-20",
+   "completion_percentage": 5,
+   "passed": false,
+   "monthly_fee_paid": 39.99,
+   "instructor": "Carlos Vega"
+  }
+ ],
+ "Q1": [
+  {
+   "student_name": "Emily Watson",
+   "student_email": "emily.watson@student.edutrack.com",
+   "completion_percentage": 85
+  },
+  {
+   "student_name": "James Miller",
+   "student_email": "james.miller@test.com",
+   "completion_percentage": 30
+  },
+  {
+   "student_name": "Klaus Weber",
+   "student_email": "klaus.weber@student.edutrack.com",
+   "completion_percentage": 92
+  },
+  {
+   "student_name": "Marco Rossi",
+   "student_email": "marco.rossi@student.edutrack.com",
+   "completion_percentage": 88
+  },
+  {
+   "student_name": "Priya Sharma",
+   "student_email": "priya.sharma@student.edutrack.com",
+   "completion_percentage": 55
+  }
+ ],
+ "Q2": [
+  {
+   "id": 10,
+   "student_name": "Yuki Nakamura",
+   "student_email": "yuki.nakamura@student.edutrack.com",
+   "course_title": "UI/UX Fundamentals",
+   "completion_percentage": 0
+  },
+  {
+   "id": 11,
+   "student_name": "Pierre Dubois",
+   "student_email": "pierre.dubois@student.edutrack.com",
+   "course_title": "UI/UX Fundamentals",
+   "completion_percentage": 0
+  },
+  {
+   "id": 6,
+   "student_name": "Lucia Fernandes",
+   "student_email": "lucia.fernandes@student.edutrack.com",
+   "course_title": "Digital Marketing 101",
+   "completion_percentage": 3
+  },
+  {
+   "id": 5,
+   "student_name": "Lucia Fernandes",
+   "student_email": "lucia.fernandes@student.edutrack.com",
+   "course_title": "Web Design Basics",
+   "completion_percentage": 5
+  }
+ ],
+ "Q3": [
+  {
+   "id": 10,
+   "student_name": "Yuki Nakamura",
+   "student_email": "yuki.nakamura@student.edutrack.com",
+   "course_title": "UI/UX Fundamentals",
+   "instructor": null
+  },
+  {
+   "id": 11,
+   "student_name": "Pierre Dubois",
+   "student_email": "pierre.dubois@student.edutrack.com",
+   "course_title": "UI/UX Fundamentals",
+   "instructor": null
+  }
+ ],
+ "Q4": [
+  {
+   "student_name": "Emily Watson",
+   "student_email": "emily.watson@student.edutrack.com",
+   "course_title": "Web Design Basics",
+   "completion_percentage": 60,
+   "passed": false
+  },
+  {
+   "student_name": "Priya Sharma",
+   "student_email": "priya.sharma@student.edutrack.com",
+   "course_title": "Intro to Python",
+   "completion_percentage": 55,
+   "passed": false
+  },
+  {
+   "student_name": "Yuki Nakamura",
+   "student_email": "yuki.nakamura@student.edutrack.com",
+   "course_title": "Data Analysis with SQL",
+   "completion_percentage": 45,
+   "passed": false
+  },
+  {
+   "student_name": "Emily Watson",
+   "student_email": "emily.watson@student.edutrack.com",
+   "course_title": "Advanced Python",
+   "completion_percentage": 40,
+   "passed": false
+  },
+  {
+   "student_name": "James Miller",
+   "student_email": "james.miller@test.com",
+   "course_title": "Intro to Python",
+   "completion_percentage": 30,
+   "passed": false
+  }
+ ],
+ "Q5": [
+  {
+   "id": 17,
+   "student_name": "Emily Watson",
+   "student_email": "emily.watson@student.edutrack.com",
+   "course_title": "Advanced Python",
+   "enrollment_date": "2025-03-05"
+  },
+  {
+   "id": 16,
+   "student_name": "Pierre Dubois",
+   "student_email": "pierre.dubois@student.edutrack.com",
+   "course_title": "Data Analysis with SQL",
+   "enrollment_date": "2025-02-20"
+  },
+  {
+   "id": 15,
+   "student_name": "Priya Sharma",
+   "student_email": "priya.sharma@student.edutrack.com",
+   "course_title": "Intro to Python",
+   "enrollment_date": "2025-01-10"
+  },
+  {
+   "id": 12,
+   "student_name": "Priya Sharma",
+   "student_email": "priya.sharma@student.edutrack.com",
+   "course_title": "Digital Marketing 101",
+   "enrollment_date": "2024-12-01"
+  },
+  {
+   "id": 11,
+   "student_name": "Pierre Dubois",
+   "student_email": "pierre.dubois@student.edutrack.com",
+   "course_title": "UI/UX Fundamentals",
+   "enrollment_date": "2024-11-05"
+  },
+  {
+   "id": 10,
+   "student_name": "Yuki Nakamura",
+   "student_email": "yuki.nakamura@student.edutrack.com",
+   "course_title": "UI/UX Fundamentals",
+   "enrollment_date": "2024-10-11"
+  },
+  {
+   "id": 9,
+   "student_name": "Yuki Nakamura",
+   "student_email": "yuki.nakamura@student.edutrack.com",
+   "course_title": "Data Analysis with SQL",
+   "enrollment_date": "2024-09-03"
+  },
+  {
+   "id": 8,
+   "student_name": "Marco Rossi",
+   "student_email": "marco.rossi@student.edutrack.com",
+   "course_title": "Intro to Python",
+   "enrollment_date": "2024-08-09"
+  },
+  {
+   "id": 6,
+   "student_name": "Lucia Fernandes",
+   "student_email": "lucia.fernandes@student.edutrack.com",
+   "course_title": "Digital Marketing 101",
+   "enrollment_date": "2024-07-01"
+  }
+ ],
+ "Q6_precheck": [],
+ "Q7_precheck": [
+  {
+   "id": 10,
+   "student_name": "Yuki Nakamura",
+   "student_email": "yuki.nakamura@student.edutrack.com",
+   "course_title": "UI/UX Fundamentals",
+   "instructor": null
+  },
+  {
+   "id": 11,
+   "student_name": "Pierre Dubois",
+   "student_email": "pierre.dubois@student.edutrack.com",
+   "course_title": "UI/UX Fundamentals",
+   "instructor": null
+  }
+ ],
+ "Q6_insert": [
+  {
+   "id": 18,
+   "student_id": 3,
+   "student_name": "Lucia Fernandes",
+   "student_email": "lucia.fernandes@student.edutrack.com",
+   "course_id": 5,
+   "course_title": "Advanced Python",
+   "category": "Programming",
+   "enrollment_date": "2025-04-01",
+   "completion_percentage": 0,
+   "passed": false,
+   "monthly_fee_paid": 69.99,
+   "instructor": "Carlos Vega"
+  }
+ ],
+ "Q7_update": [
+  {
+   "id": 10,
+   "student_name": "Yuki Nakamura",
+   "student_email": "yuki.nakamura@student.edutrack.com",
+   "course_title": "UI/UX Fundamentals",
+   "instructor": "Pending assignment"
+  },
+  {
+   "id": 11,
+   "student_name": "Pierre Dubois",
+   "student_email": "pierre.dubois@student.edutrack.com",
+   "course_title": "UI/UX Fundamentals",
+   "instructor": "Pending assignment"
+  }
+ ],
+ "Q8_precheck": [
+  {
+   "id": 13,
+   "student_name": "James Miller",
+   "student_email": "james.miller@test.com",
+   "course_title": "Intro to Python",
+   "category": "Programming",
+   "completion_percentage": 30,
+   "monthly_fee_paid": 49.99
+  },
+  {
+   "id": 14,
+   "student_name": "Alex Chen",
+   "student_email": "alex.chen@test.com",
+   "course_title": "Web Design Basics",
+   "category": "Design",
+   "completion_percentage": 10,
+   "monthly_fee_paid": 39.99
+  }
+ ],
+ "Q8_delete": [
+  {
+   "id": 13,
+   "student_name": "James Miller",
+   "student_email": "james.miller@test.com",
+   "course_title": "Intro to Python",
+   "category": "Programming",
+   "completion_percentage": 30,
+   "monthly_fee_paid": 49.99
+  },
+  {
+   "id": 14,
+   "student_name": "Alex Chen",
+   "student_email": "alex.chen@test.com",
+   "course_title": "Web Design Basics",
+   "category": "Design",
+   "completion_percentage": 10,
+   "monthly_fee_paid": 39.99
+  }
+ ],
+ "Q9": [
+  {
+   "category": "Programming",
+   "enrollment_count": 7
+  },
+  {
+   "category": "Design",
+   "enrollment_count": 4
+  },
+  {
+   "category": "Data",
+   "enrollment_count": 3
+  },
+  {
+   "category": "Marketing",
+   "enrollment_count": 2
+  }
+ ],
+ "Q10": [
+  {
+   "course_title": "UI/UX Fundamentals",
+   "avg_completion_percentage": 0
+  },
+  {
+   "course_title": "Web Design Basics",
+   "avg_completion_percentage": 32.5
+  },
+  {
+   "course_title": "Digital Marketing 101",
+   "avg_completion_percentage": 36.5
+  },
+  {
+   "course_title": "Advanced Python",
+   "avg_completion_percentage": 45
+  },
+  {
+   "course_title": "Data Analysis with SQL",
+   "avg_completion_percentage": 47.666666666666664
+  },
+  {
+   "course_title": "Intro to Python",
+   "avg_completion_percentage": 80
+  }
+ ],
+ "Q11": [
+  {
+   "course_title": "Intro to Python",
+   "enrollment_count": 4
+  }
+ ],
+ "Q12": [
+  {
+   "category": "Programming",
+   "total_revenue": 409.93
+  },
+  {
+   "category": "Data",
+   "total_revenue": 179.97
+  },
+  {
+   "category": "Design",
+   "total_revenue": 169.96
+  },
+  {
+   "category": "Marketing",
+   "total_revenue": 59.98
+  }
+ ]
+}
